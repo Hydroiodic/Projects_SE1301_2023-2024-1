@@ -28,10 +28,9 @@ namespace expressions {
 
 namespace expressions {
 
-	/********** ***** Below are expression functions **** ***********/
+	/**************** Below are expression functions ****************/
 
-	Expression::Expression(commands::IMPL t, const QString& exp)
-		: comm(t) {
+	Expression::Expression(const QString& exp) {
 		buildTree(exp);
 	}
 
@@ -44,21 +43,6 @@ namespace expressions {
 		// an expression object should be created only once
 		if (root) {
 			throw exceptions::repeatly_build_one_expression_object();
-		}
-
-		// the expression is an "IF" expression
-		if (comm == commands::IMPL::IF) {
-			// split the expression into to part
-			QStringList list = exp.split("THEN");
-
-			// if the number of string parts isn't two, throw an error
-			if (list.size() != 2)
-				throw exceptions::expression_error();
-
-			// using recursive method to create the tree
-			root = new node("THEN", createSubTree(list[0]), createSubTree(list[1]));
-			root->if_node = true;
-			return;
 		}
 
 		// the expression isn't an "IF" expression
@@ -281,25 +265,61 @@ namespace expressions {
 			return "Error\n";
 		}
 
-		// the format of expression tree differs from type to type
-		// TODO: all other types of command
-		switch (comm) {
-		case commands::LET:
-			return "LET =\n" + getNodeExpTree(root->left, 1) +
-				getNodeExpTree(root->right, 1);
-			break;
+		// this function won't be called independently here
+		return getNodeExpTree(root, 0);
+	}
+}
 
-		case commands::IF:
-			break;
+namespace expressions {
+	QString ram_expression::getExpTree() const {
+		return "";
+	}
 
-		case commands::GOTO:
-			break;
+	QString let_expression::getExpTree() const {
+		// expression isn't created
+		if (!root) { return "Error\n"; }
 
-		case commands::PRINT:
-			break;
+		return "LET =\n" + getNodeExpTree(root->left, 1) +
+			getNodeExpTree(root->right, 1);
+	}
 
-		default:
-			break;
+	QString print_expression::getExpTree() const {
+		return "";
+	}
+
+	QString input_expression::getExpTree() const {
+		return "";
+	}
+
+	QString goto_expression::getExpTree() const {
+		return "";
+	}
+
+	QString if_expression::getExpTree() const {
+		return "";
+	}
+
+	QString end_expression::getExpTree() const {
+		return "";
+	}
+
+	void if_expression::buildTree(const QString& exp) {
+		// an expression object should be created only once
+		if (root) {
+			throw exceptions::repeatly_build_one_expression_object();
 		}
+
+		// split the expression into to part
+		QStringList list = exp.split("THEN");
+
+		// if the number of string parts isn't two, throw an error
+		if (list.size() != 2)
+			throw exceptions::expression_error();
+
+		// TODO: check the condition clause
+
+		// using recursive method to create the tree
+		root = new node("THEN", createSubTree(list[0]), createSubTree(list[1]));
+		root->if_node = true;
 	}
 }

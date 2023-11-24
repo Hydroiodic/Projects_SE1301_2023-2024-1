@@ -57,13 +57,9 @@ namespace expressions {
 
 	class Expression
 	{
-	private:
-		commands::IMPL comm;
-
-	private:
+	protected:
 		// variables and functions to build a tree
 		node* root = nullptr;
-		void buildTree(const QString& exp);
 		node* createSubTree(const QString& exp) const;
 
 		// functions for createSubTree to use
@@ -81,8 +77,78 @@ namespace expressions {
 		QString getNodeExpTree(node* r, int depth) const;
 
 	public:
-		Expression(commands::IMPL t, const QString& exp);
+		Expression(const QString& exp);
 		~Expression();
+
+	/************ Below are Expression virtual functions ************/
+
+	protected:
+		// start to build the internal tree
+		virtual void buildTree(const QString& exp);
+
+	public:
+		// get the expression tree that the expression holds
+		virtual QString getExpTree() const;
+	};
+}
+
+namespace expressions {
+
+	class ram_expression : public Expression {
+	public:
+		ram_expression(const QString& str) : Expression(str) {}
+
+		// get the expression tree that the expression holds
+		QString getExpTree() const;
+	};
+
+	class let_expression : public Expression {
+	public:
+		let_expression(const QString& str) : Expression(str) {}
+
+		// get the expression tree that the expression holds
+		QString getExpTree() const;
+	};
+
+	class print_expression : public Expression {
+	public:
+		print_expression(const QString& str) : Expression(str) {}
+
+		// get the expression tree that the expression holds
+		QString getExpTree() const;
+	};
+
+	class input_expression : public Expression {
+	public:
+		input_expression(const QString& str) : Expression(str) {}
+
+		// get the expression tree that the expression holds
+		QString getExpTree() const;
+	};
+
+	class goto_expression : public Expression {
+	public:
+		goto_expression(const QString& str) : Expression(str) {}
+
+		// get the expression tree that the expression holds
+		QString getExpTree() const;
+	};
+
+	class if_expression : public Expression {
+	protected:
+		// start to build the internal tree
+		void buildTree(const QString& exp);
+
+	public:
+		if_expression(const QString& str) : Expression(str) {}
+
+		// get the expression tree that the expression holds
+		QString getExpTree() const;
+	};
+
+	class end_expression : public Expression {
+	public:
+		end_expression(const QString& str) : Expression(str) {}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
