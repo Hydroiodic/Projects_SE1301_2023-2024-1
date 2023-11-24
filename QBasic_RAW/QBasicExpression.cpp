@@ -11,6 +11,9 @@ QBasicExpression::~QBasicExpression() {
 }
 
 void QBasicExpression::loadExp(commands::IMPL t, const QString& str, int line) {
+	// set the number of the line
+	line_number = line;
+
 	try {
 		// create diffrent object for different commands
 		switch (t) {
@@ -31,11 +34,15 @@ void QBasicExpression::loadExp(commands::IMPL t, const QString& str, int line) {
 		default:
 			throw exceptions::impossible_arrival();
 		}
-		line_number = line;
 	}
 	catch (exceptions::expression_error) {
-		// ERROR will show "ERR" in the expression tree and will not be executed
+		// ERROR will show "Error" in the expression tree and will not be executed
 		state = ERROR;
+		return;
+	}
+	catch (exceptions::illegal_variable_name) {
+		state = ERROR;
+		return;
 	}
 	catch (...) {
 		throw exceptions::unknown_error_internal();

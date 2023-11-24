@@ -28,5 +28,3 @@ public:
 public:
 	QString getExpTree() const;
 };
-
-

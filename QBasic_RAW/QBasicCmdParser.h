@@ -9,7 +9,6 @@
 namespace commands {
 	const unsigned long long max_line_num = 1e6;
 
-	// TODO: expression tree
 	class Command
 	{
 	private:

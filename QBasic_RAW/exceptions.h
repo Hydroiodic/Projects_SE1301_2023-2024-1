@@ -46,4 +46,7 @@ namespace exceptions {
 
 	// thrown if an error occurred when parsing expressions
 	class expression_error : public std::exception {};
+
+	// thrown if the name of the variable isn't legal
+	class illegal_variable_name : public std::exception {};
 }

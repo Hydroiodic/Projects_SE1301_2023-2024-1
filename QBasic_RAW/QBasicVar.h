@@ -13,6 +13,7 @@ namespace variables {
 		"INPUT",
 		"GOTO",
 		"IF",
+		"THEN",
 		"END",
 		"RUN",
 		"LOAD",
@@ -44,14 +45,18 @@ namespace variables {
 		// fetch the name of the variable
 		QString fetchName() const;
 
+		// check the name of the variable
+		bool checkVar() const;
+
+		// check the state of the variable
+		bool checkState() const;
+
 	private:
 		// save the name of the variable
 		QString name;
-		bool checkVar() const;
 
 		// save the state of the variable
 		STATE state = STATE::UNDEF;
-		bool checkState() const;
 
 		// save the data of the variable
 		T data;
@@ -73,6 +78,14 @@ namespace variables {
 		// key_words shouldn't be used
 		for (int i = 0; i < key_words.size(); ++i) {
 			if (key_words[i] == name) return false;
+		}
+
+		// the charactor consisting of the string should be right
+		for (int i = 0; i < name.length(); ++i) {
+			if (!(name[i] <= 'Z' && name[i] >= 'A' ||
+				name[i] <= 'z' && name[i] >= 'a' ||
+				name[i] <= '9' && name[i] >= '0' ||
+				name[i] == '_')) return false;
 		}
 
 		return true;

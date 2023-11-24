@@ -28,11 +28,7 @@ namespace expressions {
 
 namespace expressions {
 
-	/**************** Below are expression functions ****************/
-
-	Expression::Expression(const QString& exp) {
-		buildTree(exp);
-	}
+	/**************** Below are Expression functions ****************/
 
 	Expression::~Expression() {
 		if (!root) return;
@@ -49,7 +45,11 @@ namespace expressions {
 		root = createSubTree(exp);
 	}
 
-	node* Expression::createSubTree(const QString& exp) const {
+	node* Expression::createSubTree(const QString& str) const {
+		// trim the string
+		QString exp = str.trimmed();
+		if (exp == "") return nullptr;
+
 		// operator stack and variable stack
 		std::stack<node*> opera;
 		std::stack<node*> varia;
@@ -57,25 +57,69 @@ namespace expressions {
 		// save the name of the current variable
 		QString var = "";
 
-		// use a lambda expression to push a variable into the variable stack
-		auto push_var = [&varia, &var]() -> void
-			{
-				if (var.length()) {
-					QBasicVar* variable = new QBasicVar(nullptr, var);
-					node* var_to_push = new node(variable);
-					varia.push(var_to_push);
-					var = "";
-				}
-			};
+		// the first number is a negative number
+		if (exp[0] == '-') {
+			var += "-";
+			exp = exp.mid(1);
+		}
 
 		// begin scan operation
-		// TODO: "()" are not considered in this version
 		for (int i = 0; i < exp.length(); ++i) {
+			// if the current charactor is ' '
+			if (exp[i] == ' ' || exp[i] == '\n' || exp[i] == '\t') {
+				if (var.length() != 0) {
+					pushVariable(opera, varia, var);
+				}
+				continue;
+			}
+
+			// deal with the appearance of ()
+			if (exp[i] == '(') {
+				// illegal format
+				if (var != "") {
+					releaseMemBeforeThrow(opera, varia, nullptr);
+					throw exceptions::expression_error();
+				}
+
+				bool findBracket = false;
+				for (int j = i; j < exp.length(); ++j) {
+					if (exp[j] == ')') {
+						findBracket = true;
+						node* bracket = nullptr;
+						try {
+							bracket = createSubTree(exp.mid(i + 1, j - i - 1));
+						}
+						catch (exceptions::expression_error e) {
+							releaseMemBeforeThrow(opera, varia, nullptr);
+							throw e;
+						}
+						catch (exceptions::illegal_variable_name e) {
+							releaseMemBeforeThrow(opera, varia, nullptr);
+							throw e;
+						}
+						catch (...) {
+							releaseMemBeforeThrow(opera, varia, nullptr);
+							throw exceptions::unknown_error_internal();
+						}
+
+						varia.push(bracket);
+						i = j;
+						break;
+					}
+				}
+
+				if (!findBracket) {
+					releaseMemBeforeThrow(opera, varia, nullptr);
+					throw exceptions::expression_error();
+				}
+				continue;
+			}
+
 			// in this function, only i may be changed at most
 			QPair<bool, QString> operatorResult = classifyOperator(exp, i, var);
 			if (operatorResult.first) {
 				// push variable into the variable stack
-				push_var();
+				pushVariable(opera, varia, var);
 
 				// push the operator into the operator stack
 				node* op_to_push = new node(operatorResult.second);
@@ -89,17 +133,13 @@ namespace expressions {
 				continue;
 			}
 
-			// if the current charactor is ' '
-			if (exp[i] == ' ') {
-				if (var.length() != 0) {
-					push_var();
-				}
-				continue;
-			}
+			// the charactor is unknown or illegal
+			releaseMemBeforeThrow(opera, varia, nullptr);
+			throw exceptions::expression_error();
 		}
 
 		if (var.length() != 0) {
-			push_var();
+			pushVariable(opera, varia, var);
 		}
 
 		// complete tree building by emptying the two stacks
@@ -149,9 +189,6 @@ namespace expressions {
 
 		// delete op
 		if (op) delete op;
-
-		// delete this
-		delete this;
 	}
 
 	void Expression::pushOperator(std::stack<node*>& opera,
@@ -195,6 +232,40 @@ namespace expressions {
 		else {
 			opera.push(op);
 		}
+	}
+
+	void Expression::pushVariable(std::stack<node*>& opera,
+		std::stack<node*>& varia, QString& var) const {
+		// the string is empty
+		if (!var.length()) return;
+
+		// if the string represents a constant
+		if (var[0] <= '9' && var[0] >= '0' || var[0] == '-') {
+			// the string is not a number, error occurs
+			if (!isNumber(var)) {
+				releaseMemBeforeThrow(opera, varia, nullptr);
+				throw exceptions::illegal_variable_name();
+			}
+
+			node* num_to_push = new node(var.toInt());
+			varia.push(num_to_push);
+		}
+		// else the string represents a variable
+		else {
+			QBasicVar* variable = new QBasicVar(nullptr, var);
+			node* var_to_push = new node(variable);
+
+			// check the name of the variable
+			if (!variable->checkVar()) {
+				releaseMemBeforeThrow(opera, varia, var_to_push);
+				throw exceptions::illegal_variable_name();
+			}
+
+			varia.push(var_to_push);
+		}
+
+		// clear the variable
+		var = "";
 	}
 
 	node* Expression::emptyStack(std::stack<node*>& opera,
@@ -245,12 +316,7 @@ namespace expressions {
 		}
 
 		// add the name of variable or operator
-		if (r->is_op) {
-			ans += r->op;
-		}
-		else {
-			ans += r->var->fetchName();
-		}
+		ans += r->getContent();
 		ans += "\n";
 
 		// recursion
@@ -271,8 +337,14 @@ namespace expressions {
 }
 
 namespace expressions {
+
+	/**************** Below are getExpTree functions ****************/
+
 	QString ram_expression::getExpTree() const {
-		return "";
+		// expression isn't created
+		if (!root) { return "Error\n"; }
+
+		return "REM\n" + getNodeExpTree(root, 1);
 	}
 
 	QString let_expression::getExpTree() const {
@@ -284,23 +356,108 @@ namespace expressions {
 	}
 
 	QString print_expression::getExpTree() const {
-		return "";
+		// expression isn't created
+		if (!root) { return "Error\n"; }
+
+		return "PRINT\n" + getNodeExpTree(root, 1);
 	}
 
 	QString input_expression::getExpTree() const {
-		return "";
+		// expression isn't created
+		if (!root) { return "Error\n"; }
+
+		return "INPUT\n" + getNodeExpTree(root, 1);
 	}
 
 	QString goto_expression::getExpTree() const {
-		return "";
+		// expression isn't created
+		if (!root) { return "Error\n"; }
+
+		return "GOTO\n" + getNodeExpTree(root, 1);
 	}
 
 	QString if_expression::getExpTree() const {
-		return "";
+		// expression isn't created
+		if (!root) { return "Error\n"; }
+
+		return "IF THEN\n" + getNodeExpTree(root->left->left, 1) + 
+			"\t" + root->left->op + "\n" + getNodeExpTree(root->left->right, 1) + 
+			getNodeExpTree(root->right, 1);
 	}
 
 	QString end_expression::getExpTree() const {
-		return "";
+		return "END\n";
+	}
+
+	/***************** Below are buildTree functions ****************/
+
+	void ram_expression::buildTree(const QString& exp) {
+		// an expression object should be created only once
+		if (root) {
+			throw exceptions::repeatly_build_one_expression_object();
+		}
+		
+		// use the QString op to save the content of comments
+		root = new node(exp);
+	}
+
+	void let_expression::buildTree(const QString& exp) {
+		if (root) {
+			throw exceptions::repeatly_build_one_expression_object();
+		}
+
+		// the expression must be an assignment clause
+		if (!isAssignExp(exp)) {
+			throw exceptions::expression_error();
+		}
+
+		// split the string into 2 parts
+		QStringList list = exp.split("=");
+		if (list.size() != 2) {
+			throw exceptions::unknown_error_internal();
+		}
+
+		// create the root of the tree
+		root = new node("=", createSubTree(list[0]), createSubTree(list[1]));
+	}
+
+	void print_expression::buildTree(const QString& exp) {
+		if (root) {
+			throw exceptions::repeatly_build_one_expression_object();
+		}
+
+		// the expression must be an assignment clause
+		if (!isCalcuExp(exp)) {
+			throw exceptions::expression_error();
+		}
+
+		root = createSubTree(exp);
+	}
+
+	void input_expression::buildTree(const QString& exp) {
+		if (root) {
+			throw exceptions::repeatly_build_one_expression_object();
+		}
+
+		// the name of the variable must be legal
+		if (!isVariable(exp)) {
+			throw exceptions::illegal_variable_name();
+		}
+
+		root = createSubTree(exp);
+	}
+
+	void goto_expression::buildTree(const QString& exp) {
+		if (root) {
+			throw exceptions::repeatly_build_one_expression_object();
+		}
+
+		// the name of the variable must be legal
+		if (!isNumber(exp)) {
+			throw exceptions::expression_error();
+		}
+
+		root = createSubTree(exp);
 	}
 
 	void if_expression::buildTree(const QString& exp) {
@@ -309,17 +466,143 @@ namespace expressions {
 			throw exceptions::repeatly_build_one_expression_object();
 		}
 
-		// split the expression into to part
-		QStringList list = exp.split("THEN");
+		// find "THEN"
+		int end_of_first_expression = -1;
+		for (int i = 0; i < exp.length() - 3; ++i) {
+			if (exp[i] == ' ' && exp[i + 1] == 'T' && exp[i + 2] == 'H' &&
+				exp[i + 3] == 'E' && exp[i + 4] == 'N' && exp[i + 5] == ' ') {
+				end_of_first_expression = i;
+				break;
+			}
+		}
 
-		// if the number of string parts isn't two, throw an error
-		if (list.size() != 2)
+		// if "THEN" not found
+		if (end_of_first_expression == -1) {
 			throw exceptions::expression_error();
+		}
+		
+		// split the two expressions
+		QString exp_1 = exp.mid(0, end_of_first_expression);
+		QString exp_2 = exp.mid(end_of_first_expression + 5);
 
-		// TODO: check the condition clause
+		// check the format of the two parts of the string
+		if (!(isCmpExp(exp_1) && isNumber(exp_2))) {
+			throw exceptions::expression_error();
+		}
+
+		// find the comparing operator
+		int pos_of_comparing_op = -1;
+		for (int i = 0; i < exp_1.length(); ++i) {
+			if (exp_1[i] == '>' || exp_1[i] == '<' || exp_1[i] == '=') {
+				pos_of_comparing_op = i;
+				break;
+			}
+		}
+
+		if (pos_of_comparing_op == -1) {
+			throw exceptions::unknown_error_internal();
+		}
 
 		// using recursive method to create the tree
-		root = new node("THEN", createSubTree(list[0]), createSubTree(list[1]));
-		root->if_node = true;
+		node* left_node = new node(QString(exp_1[pos_of_comparing_op]), 
+			createSubTree(exp_1.mid(0, pos_of_comparing_op)), 
+			createSubTree(exp_1.mid(pos_of_comparing_op + 1)));
+		root = new node("THEN", left_node, createSubTree(exp_2));
+	}
+
+	void end_expression::buildTree(const QString& exp) {
+		/* nothing needed */
+	}
+}
+
+namespace expressions {
+
+	// the functions below only check the main operator
+	//     whether the expression in correct isn't checked
+
+	bool isCmpExp(const QString& str) {
+		// calculate for the count of those comparing operators
+		int compare_ops_count = 0;
+		for (int i = 0; i < str.length(); ++i) {
+			if (str[i] == '>' || str[i] == '<' || str[i] == '=') {
+				++compare_ops_count;
+			}
+		}
+
+		// the number of the comparing operators should be 1
+		return compare_ops_count == 1;
+	}
+
+	bool isAssignExp(const QString& str) {
+		// save the the name of the left variable
+		QStringList split_str = str.trimmed().split("=");
+
+		// the expression should be split into only 2 parts
+		if (split_str.size() != 2) {
+			return false;
+		}
+
+		split_str[0] = split_str[0].trimmed();
+		for (int i = 0; i < split_str[0].length(); ++i) {
+			if (!checkChar(split_str[0].toStdString()[i])) {
+				return false;
+			}
+		}
+
+		return isCalcuExp(split_str[1]);
+	}
+
+	bool isCalcuExp(const QString& str) {
+		QString trimmed_str = str.trimmed();
+
+		if (trimmed_str == "") return false;
+
+		for (int i = 0; i < trimmed_str.length(); ++i) {
+			// in calculation expression, there shouldn't be > < =
+			if (trimmed_str[i] == '>' || trimmed_str[i] == '<' || 
+				trimmed_str[i] == '=') {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool isNumber(const QString& str) {
+		QString trimmed_str = str.trimmed();
+
+		if (trimmed_str == "") return false;
+
+		// the first char maybe '-' or number
+		if (!(trimmed_str[0] >= '0' && trimmed_str[0] <= '9' ||
+			trimmed_str[0] == '-' && trimmed_str.length() > 1)) return false;
+
+		// the rest of the char must be number
+		for (int i = 1; i < trimmed_str.length(); ++i) {
+			if (!(trimmed_str[i] <= '9' && trimmed_str[i] >= '0')) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool isVariable(const QString& str) {
+		QString trimmed_str = str.trimmed();
+
+		// the attributes of a variable
+		if (trimmed_str == "") return false;
+		if (trimmed_str[0] >= '0' && trimmed_str[0] <= '9') return false;
+
+		// check key_words
+		for (int i = 0; i < variables::key_words.size(); ++i) {
+			if (variables::key_words[i] == trimmed_str) return false;
+		}
+
+		// check char
+		for (int i = 0; i < trimmed_str.length(); ++i) {
+			if (!checkChar(trimmed_str.toStdString()[i])) return false;
+		}
+
+		return true;
 	}
 }
