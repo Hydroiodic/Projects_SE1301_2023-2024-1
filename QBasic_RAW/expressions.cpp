@@ -1,3 +1,4 @@
+#include "QBasic.h"
 #include "expressions.h"
 
 namespace expressions {
@@ -33,16 +34,6 @@ namespace expressions {
 	Expression::~Expression() {
 		if (!root) return;
 		delete root;
-	}
-
-	void Expression::buildTree(const QString& exp) {
-		// an expression object should be created only once
-		if (root) {
-			throw exceptions::repeatly_build_one_expression_object();
-		}
-
-		// the expression isn't an "IF" expression
-		root = createSubTree(exp);
 	}
 
 	node* Expression::createSubTree(const QString& str) const {
@@ -252,7 +243,7 @@ namespace expressions {
 		}
 		// else the string represents a variable
 		else {
-			QBasicVar* variable = new QBasicVar(nullptr, var);
+			QBasicVar* variable = basic->variables_list->fetchVar(var);
 			node* var_to_push = new node(variable);
 
 			// check the name of the variable
@@ -324,15 +315,6 @@ namespace expressions {
 		ans += r->right ? getNodeExpTree(r->right, depth + 1) : "";
 
 		return ans;
-	}
-
-	QString Expression::getExpTree() const {
-		if (!root) {
-			return "Error\n";
-		}
-
-		// this function won't be called independently here
-		return getNodeExpTree(root, 0);
 	}
 }
 
@@ -513,6 +495,86 @@ namespace expressions {
 	void end_expression::buildTree(const QString& exp) {
 		/* nothing needed */
 	}
+
+	/************* Below are executeExpression functions ************/
+
+	int ram_expression::executeExpression() {
+		/* there's nothing needed */
+		return -1;
+	}
+
+	int let_expression::executeExpression() {
+		// if the expression are not loaded yet
+		if (!root) {
+			throw exceptions::expression_not_loaded();
+		}
+
+		// the format of this expression is incorrect
+		if (!root->left || root->left->type != VAR) {
+			throw exceptions::expression_error();
+		}
+
+		// assign the variable
+		QBasicVar* var_to_assign = root->left->var;
+		var_to_assign->assign(calculateCalcuExp(root->right));
+
+		return -1;
+	}
+
+	int print_expression::executeExpression() {
+		// if the expression are not loaded yet
+		if (!root) {
+			throw exceptions::expression_not_loaded();
+		}
+
+		// get the value and print them
+		int ans = calculateCalcuExp(root);
+		basic->ui->textBrowser->append(QString::number(ans) + "\n");
+
+		return -1;
+	}
+
+	int input_expression::executeExpression() {
+		return -1;
+	}
+
+	int goto_expression::executeExpression() {
+		// if the expression are not loaded yet
+		if (!root) {
+			throw exceptions::expression_not_loaded();
+		}
+
+		// if the type doesn't match
+		if (root->type != CON) {
+			throw exceptions::expression_error();
+		}
+
+		return root->constant;
+	}
+
+	int if_expression::executeExpression() {
+		// if the expression are not loaded yet
+		if (!root) {
+			throw exceptions::expression_not_loaded();
+		}
+
+		// the right son node must be a constant node
+		if (!root->right || root->right->type != CON) {
+			throw exceptions::expression_error();
+		}
+
+		// execute the expression
+		if (calculateCmpExp(root->left)) {
+			return root->right->constant;
+		}
+
+		// the condition doesn't match
+		return -1;
+	}
+
+	int end_expression::executeExpression() {
+		return 0x7fffffff;
+	}
 }
 
 namespace expressions {
@@ -604,5 +666,114 @@ namespace expressions {
 		}
 
 		return true;
+	}
+}
+
+namespace expressions {
+
+	// these functions will calculate the expression
+	//     ATTENTION! these functions won't check the correctness of the expression!
+
+	int calculateCalcuExp(node* r) {
+		// to calculate this expression requires the pointer exists
+		if (!r) {
+			throw exceptions::unknown_error_internal();
+		}
+
+		// deal with different type of the node
+		switch (r->type) {
+		case VAR:
+			return r->var->fetchValue();
+
+		case CON:
+			return r->constant;
+
+		case OP:
+			return calculateCalcuExp(r->op, r->left, r->right);
+			break;
+
+		default:
+			throw exceptions::impossible_arrival();
+		}
+	}
+
+	int calculateCalcuExp(const QString& op, node* left, node* right) {
+		// all calculation operators
+		static const std::vector<QString> operators = {
+			"+", "-", "*", "/", "MOD", "**"
+		};
+
+		// find the operator
+		int i = 0;
+		for (; i < operators.size(); ++i) {
+			if (operators[i] == op) break;
+		}
+
+		// the operator is not in the vector above
+		if (i == operators.size()) {
+			throw exceptions::unknown_error_internal();
+		}
+
+		// deal with different operators
+		switch (i) {
+		case 0:
+			return calculateCalcuExp(left) + calculateCalcuExp(right);
+
+		case 1:
+			return calculateCalcuExp(left) - calculateCalcuExp(right);
+
+		case 2:
+			return calculateCalcuExp(left) * calculateCalcuExp(right);
+
+		case 3:
+			return calculateCalcuExp(left) / calculateCalcuExp(right);
+
+		case 4:
+			return calculateCalcuExp(left) % calculateCalcuExp(right);
+
+		case 5:
+			return qPow(calculateCalcuExp(left), calculateCalcuExp(right));
+
+		default:
+			throw exceptions::impossible_arrival();
+		}
+	}
+
+	bool calculateCmpExp(node* r) {
+		// all comparing operators
+		static const std::vector<QString> operators = {
+			">", "<", "="
+		};
+
+		// if the type of the node is incorrect
+		if (r->type != OP) {
+			throw exceptions::unknown_error_internal();
+		}
+
+		// find the operator
+		int i = 0;
+		for (; i < operators.size(); ++i) {
+			if (operators[i] == r->op) break;
+		}
+
+		// the operator is not in the vector above
+		if (i == operators.size()) {
+			throw exceptions::unknown_error_internal();
+		}
+
+		// deal with diffrent comparing operators
+		switch (i) {
+		case 0:
+			return calculateCalcuExp(r->left) > calculateCalcuExp(r->right);
+
+		case 1:
+			return calculateCalcuExp(r->left) < calculateCalcuExp(r->right);
+
+		case 2:
+			return calculateCalcuExp(r->left) == calculateCalcuExp(r->right);
+
+		default:
+			throw exceptions::impossible_arrival();
+		}
 	}
 }

@@ -22,6 +22,10 @@ namespace exceptions {
 	//     ATTENTION! this error is caused by the programmer
 	class repeatly_build_one_expression_object : public std::exception {};
 
+	// the root of the expression is nullptr when execute the expression
+	//     ATTENTION! this error is caused by the programmer
+	class expression_not_loaded : public std::exception {};
+
 	// unknown internal error, please check why this happened
 	//     ATTENTION! this error is caused by the programmer
 	class unknown_error_internal : public std::exception {};

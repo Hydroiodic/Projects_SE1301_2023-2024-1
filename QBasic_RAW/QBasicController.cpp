@@ -10,7 +10,9 @@ QBasicController::~QBasicController() {
 }
 
 void QBasicController::run() const {
+	// clear the previous texts
 	basic->ui->treeDisplay->clear();
+	basic->ui->textBrowser->clear();
 
 	// iterate all codes saved previously
 	int len = basic->code.size();
@@ -25,7 +27,10 @@ void QBasicController::run() const {
 				break;
 
 			case commands::STATE::BROKEN:
-				throw exceptions::expression_error();
+				// the clause is broken, no more checking needed
+				basic->ui->treeDisplay->append(QString::number(
+					cur_cmd.getLineNum()) + " Error\n");
+				continue;
 
 			default:
 				throw exceptions::impossible_arrival();
@@ -34,12 +39,29 @@ void QBasicController::run() const {
 			// load expression, there may be expression_error thrown
 			basic->expression->loadExp(cur_cmd.getImplType(),
 				cur_cmd.getExp(), cur_cmd.getLineNum());
-			basic->expression->executeExp();
 
 			// append the expression to the tree
 			basic->ui->treeDisplay->append(basic->expression->getExpTree());
 
+			// get the number of the next line
+			int next_line = basic->expression->executeExp();
+
+			// clear the expression and run the next expression
+			// TODO: use a vector to store them or make a counter another way
 			basic->expression->clearExp();
+
+			// the expression is END
+			if (next_line == 0x7fffffff) {
+				break;
+			}
+
+			// find the index of "next_line" and assign it to i
+			if (next_line <= commands::max_line_num) {
+				int next_i = basic->code.getCodeNo(next_line);
+				if (next_i != -1) {
+					i = next_i - 1;
+				}
+			}
 		}
 		catch (...) {
 			// ATTENTION! Internal Error!
@@ -57,7 +79,6 @@ void QBasicController::list() const {
 }
 
 void QBasicController::clear() const {
-	// TODO: clear the status of the program
 	basic->code.clearCode();
 
 	// clear the displayed text of the window

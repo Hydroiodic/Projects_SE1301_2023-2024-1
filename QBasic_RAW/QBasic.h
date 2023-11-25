@@ -5,6 +5,7 @@
 #include "QBasicCmdParser.h"
 #include "QBasicCode.h"
 #include "QBasicExpression.h"
+#include "QBasicVarList.h"
 #include "exceptions.h"
 #include "ui_QBasic.h"
 
@@ -25,6 +26,9 @@ private:
     QBasicCmdParser* parser = nullptr;
 
 private:
+    friend class expressions::Expression;
+    friend class expressions::print_expression;
+    QBasicVarList* variables_list = nullptr;
     QBasicExpression* expression = nullptr;
 
 private:

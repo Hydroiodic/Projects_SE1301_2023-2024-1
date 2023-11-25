@@ -26,6 +26,7 @@
     <ClCompile Include="QBasicController.cpp" />
     <ClCompile Include="QBasicExpression.cpp" />
     <ClCompile Include="QBasicVar.cpp" />
+    <ClCompile Include="QBasicVarList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QBasic.h" />
@@ -36,6 +37,8 @@
   <ItemGroup>
     <ClInclude Include="commands.h" />
     <ClInclude Include="exceptions.h" />
+    <ClInclude Include="variables.h" />
+    <QtMoc Include="QBasicVarList.h" />
     <QtMoc Include="QBasicCode.h" />
     <QtMoc Include="QBasicExpression.h" />
     <ClInclude Include="expressions.h" />

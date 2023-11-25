@@ -2,7 +2,8 @@
 
 /************* Below are QBasicExpression functions *************/
 
-QBasicExpression::QBasicExpression(QObject* parent) : QObject(parent) {
+QBasicExpression::QBasicExpression(QObject* parent, QBasic* b) 
+	: QObject(parent), basic(b) {
 	/* there's nothing to do */
 }
 
@@ -18,19 +19,19 @@ void QBasicExpression::loadExp(commands::IMPL t, const QString& str, int line) {
 		// create diffrent object for different commands
 		switch (t) {
 		case commands::IMPL::REM:
-			exp = new ram_expression(str); break;
+			exp = new ram_expression(str, basic); break;
 		case commands::IMPL::LET:
-			exp = new let_expression(str); break;
+			exp = new let_expression(str, basic); break;
 		case commands::IMPL::PRINT:
-			exp = new print_expression(str); break;
+			exp = new print_expression(str, basic); break;
 		case commands::IMPL::INPUT:
-			exp = new input_expression(str); break;
+			exp = new input_expression(str, basic); break;
 		case commands::IMPL::GOTO:
-			exp = new goto_expression(str); break;
+			exp = new goto_expression(str, basic); break;
 		case commands::IMPL::IF:
-			exp = new if_expression(str); break;
+			exp = new if_expression(str, basic); break;
 		case commands::IMPL::END:
-			exp = new end_expression(str); break;
+			exp = new end_expression(str, basic); break;
 		default:
 			throw exceptions::impossible_arrival();
 		}
@@ -52,16 +53,15 @@ void QBasicExpression::loadExp(commands::IMPL t, const QString& str, int line) {
 	state = ACTIVE;
 }
 
-void QBasicExpression::executeExp() {
-	// repeat execution is not allowed
+int QBasicExpression::executeExp() {
+	// if the expression is an error expression, no operations needed
 	if (state != ACTIVE) {
-		// TODO: maybe an error thrown?
-		return;
+		return -1;
 	}
 
-	// TODO: execute the command
-
-	state = INACTIVE;
+	// execute the command
+	// TODO: exception handling
+	return exp->executeExpression();
 }
 
 void QBasicExpression::clearExp() {

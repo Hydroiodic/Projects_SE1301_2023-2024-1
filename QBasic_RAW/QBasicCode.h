@@ -19,6 +19,8 @@ public:
 	QString getCode() const;
 	void clearCode();
 
+	int getCodeNo(int line_number) const;
+
 	size_t size() const;
 	Command operator[](int n) const;
 

@@ -5,7 +5,8 @@ QBasic::QBasic(QWidget* parent) : QMainWindow(parent), ui(new Ui::QBasic) {
 
 	controller = new QBasicController(nullptr, this);
 	parser = new QBasicCmdParser();
-	expression = new QBasicExpression();
+	variables_list = new QBasicVarList();
+	expression = new QBasicExpression(nullptr, this);
 
 	// initialize slots for QBasic to use
 	initSlots();
@@ -15,6 +16,8 @@ QBasic::~QBasic() {
 	delete ui;
 	delete controller;
 	delete parser;
+	delete variables_list;
+	delete expression;
 }
 
 /************* Below are QBasic informing functions *************/

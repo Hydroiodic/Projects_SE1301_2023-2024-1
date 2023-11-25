@@ -29,6 +29,20 @@ void QBasicCode::clearCode() {
 	code.clear();
 }
 
+int QBasicCode::getCodeNo(int line_number) const {
+	// find the index of the line_number
+	int i = 0;
+	for (std::map<int, Command>::const_iterator it = code.begin(); 
+		it != code.end(); ++it, ++i) {
+		if (it->first == line_number) {
+			return i;
+		}
+	}
+
+	// if not found, return -1
+	return -1;
+}
+
 size_t QBasicCode::size() const {
 	return code.size();
 }

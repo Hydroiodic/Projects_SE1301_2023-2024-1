@@ -8,10 +8,12 @@
 #include "commands.h"
 #include "exceptions.h"
 
+class QBasic;
+
 namespace expressions {
 	const std::vector<std::vector<QString>> ops = {
-		{ "<", ">", "=" }, 
-		{ "+", "-" }, 
+		{ "<", ">", "=" },
+		{ "+", "-" },
 		{ "*", "/", "MOD" },
 		{ "**" }
 	};
@@ -27,7 +29,7 @@ namespace expressions {
 
 	// represent the state of the expression
 	enum STATE_EXP {
-		ERROR, ACTIVE, INACTIVE
+		ERROR, ACTIVE
 	};
 
 	// the type of the node
@@ -70,8 +72,7 @@ namespace expressions {
 		}
 
 		~node() {
-			// TODO: deleting a variable shouldn't be done here
-			if (var) delete var;
+			// deleting the left tree and the right tree recursively
 			if (left) delete left;
 			if (right) delete right;
 		}
@@ -100,19 +101,25 @@ namespace expressions {
 		// functions for getNodeExpTree to use
 		QString getNodeExpTree(node* r, int depth) const;
 
+		// a variable to save the list of variables
+		QBasic* basic = nullptr;
+
 	public:
-		Expression() {};
+		Expression(QBasic* b) : basic(b) {};
 		~Expression();
 
-	/************ Below are Expression virtual functions ************/
+		/************ Below are Expression virtual functions ************/
 
 	protected:
 		// start to build the internal tree
-		virtual void buildTree(const QString& exp);
+		virtual void buildTree(const QString& exp) = 0;
 
 	public:
 		// get the expression tree that the expression holds
-		virtual QString getExpTree() const;
+		virtual QString getExpTree() const = 0;
+
+		// to execute the expression
+		virtual int executeExpression() = 0;
 	};
 }
 
@@ -124,10 +131,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		ram_expression(const QString& str) { buildTree(str); }
+		ram_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 
 	class let_expression : public Expression {
@@ -136,10 +149,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		let_expression(const QString& str) { buildTree(str); }
+		let_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 
 	class print_expression : public Expression {
@@ -148,10 +167,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		print_expression(const QString& str) { buildTree(str); }
+		print_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 
 	class input_expression : public Expression {
@@ -160,10 +185,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		input_expression(const QString& str) { buildTree(str); }
+		input_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 
 	class goto_expression : public Expression {
@@ -172,10 +203,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		goto_expression(const QString& str) { buildTree(str); }
+		goto_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 
 	class if_expression : public Expression {
@@ -184,10 +221,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		if_expression(const QString& str) { buildTree(str); }
+		if_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 
 	class end_expression : public Expression {
@@ -196,10 +239,16 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		end_expression(const QString& str) { buildTree(str); }
+		end_expression(const QString& str, QBasic* l)
+			: Expression(l) {
+			buildTree(str);
+		}
 
 		// get the expression tree that the expression holds
 		QString getExpTree() const;
+
+		// to execute the expression
+		int executeExpression();
 	};
 }
 
@@ -213,4 +262,14 @@ namespace expressions {
 	bool isCalcuExp(const QString& str);
 	bool isNumber(const QString& str);
 	bool isVariable(const QString& str);
+}
+
+namespace expressions {
+
+	// these functions will calculate the expression
+	//     ATTENTION! these functions won't check the correctness of the expression!
+
+	int calculateCalcuExp(node* r);
+	int calculateCalcuExp(const QString& op, node* left, node* right);
+	bool calculateCmpExp(node* r);
 }
