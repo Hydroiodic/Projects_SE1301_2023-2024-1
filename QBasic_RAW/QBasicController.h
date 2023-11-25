@@ -35,4 +35,7 @@ private:
 		&QBasicController::help,
 		&QBasicController::quit
 	};
+
+	// function to load codes to QBasicExpression
+	void loadExpressions() const;
 };

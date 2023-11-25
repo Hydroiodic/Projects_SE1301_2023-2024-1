@@ -17,9 +17,13 @@ public:
 	~QBasicExpression();
 
 private:
-	int line_number = -1;
-	Expression* exp = nullptr;
-	STATE_EXP state = STATE_EXP::ERROR;
+	struct exp_pack {
+		int line_number = -1;
+		Expression* exp = nullptr;
+		STATE_EXP state = STATE_EXP::ERROR;
+	};
+
+	std::vector<exp_pack> exp_list;
 
 private:
 	QBasic* basic = nullptr;
@@ -27,10 +31,10 @@ private:
 public:
 	// to create an expression object of type implement
 	// TODO: create one for the type instant
-	void loadExp(commands::IMPL t, const QString& str, int line);
-	int executeExp();
+	void addExp(commands::IMPL t, const QString& str, int line, commands::STATE s);
+	int executeExp(int index);
 	void clearExp();
 
 public:
-	QString getExpTree() const;
+	QString getExpTree(int index) const;
 };
