@@ -12,6 +12,10 @@ void QBasicCode::addCode(const Command& com) {
 	code[com.getLineNum()] = com;
 }
 
+void QBasicCode::deleteCode(int line_num) {
+	code.erase(line_num);
+}
+
 QString QBasicCode::getCode() const {
 	QString str = "";
 

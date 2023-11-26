@@ -137,15 +137,15 @@ namespace commands {
 		if (!input) return RESULT(false, Command());
 
 		// the command must be contained in the vector
-		int impl_command_num = getIdxInst(QString::fromStdString(inst_command));
+		int inst_command_num = getIdxInst(QString::fromStdString(inst_command));
 
 		// all left expression are input into exp
 		std::getline(input, exp);
 
 		// no instant command found, return false
-		if (impl_command_num == -1) return RESULT(false, Command());
+		if (inst_command_num == -1) return RESULT(false, Command());
 
-		return RESULT(true, Command(INS, INST(impl_command_num), QString::fromStdString(exp)));
+		return RESULT(true, Command(INS, INST(inst_command_num), QString::fromStdString(exp)));
 	}
 
 	Command QBasicCmdParser::parseCommand(const QString& str) const {

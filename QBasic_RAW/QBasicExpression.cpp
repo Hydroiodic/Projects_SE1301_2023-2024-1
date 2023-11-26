@@ -18,6 +18,10 @@ void QBasicExpression::addExp(commands::IMPL t,
 	// set the number of the line
 	pack_to_add.line_number = line;
 
+	// ACTIVE means the expression is ready for execution
+	// if there's any error afterwards, change it to ERROR before push
+	pack_to_add.state = ACTIVE;
+
 	// if the command is broken, return directly
 	if (s == commands::STATE::BROKEN) {
 		pack_to_add.state = ERROR;
@@ -49,18 +53,13 @@ void QBasicExpression::addExp(commands::IMPL t,
 	catch (exceptions::expression_error) {
 		// ERROR will show "Error" in the expression tree and will not be executed
 		pack_to_add.state = ERROR;
-		return;
 	}
 	catch (exceptions::illegal_variable_name) {
 		pack_to_add.state = ERROR;
-		return;
 	}
 	catch (...) {
 		throw exceptions::unknown_error_internal();
 	}
-
-	// ACTIVE means the expression is ready for execution
-	pack_to_add.state = ACTIVE;
 
 	// add the expression package to the vector
 	exp_list.push_back(pack_to_add);

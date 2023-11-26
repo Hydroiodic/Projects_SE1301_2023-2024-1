@@ -16,6 +16,7 @@ public:
 
 public:
 	void addCode(const Command& com);
+	void deleteCode(int line_num);
 	QString getCode() const;
 	void clearCode();
 

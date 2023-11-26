@@ -52,6 +52,50 @@ void QBasic::executeCmd(int no) {
 	controller->execute(no);
 }
 
+void QBasic::executeInstCmd(const Command& cmd) {
+	Expression* exp = nullptr;
+
+	try {
+		// deal with different type the instant command holds
+		switch (cmd.getInstType()) {
+		case commands::INST::Let:
+			exp = new let_expression(cmd.getExp(), this);
+			break;
+
+		case commands::INST::Print:
+			exp = new print_expression(cmd.getExp(), this);
+			break;
+
+		case commands::INST::Input:
+			exp = new input_expression(cmd.getExp(), this);
+			break;
+
+		default:
+			throw exceptions::impossible_arrival();
+		}
+	}
+	catch (exceptions::expression_error) {
+		inform("The input instant expression is error!");
+		return;
+	}
+	catch (exceptions::illegal_variable_name) {
+		inform("The name of the variable is illegal!");
+		return;
+	}
+	catch (...) {
+		throw exceptions::unknown_error_internal();
+	}
+
+	// the operator new failed
+	if (!exp) {
+		throw exceptions::unknown_error_internal();
+	}
+
+	// execute the instant command and then release the memory
+	exp->executeExpression();
+	delete exp;
+}
+
 /*************** Below are QBasic slots functions ***************/
 
 void QBasic::initSlots() {
@@ -84,11 +128,14 @@ void QBasic::on_cmdLineEdit_returnPressed() {
 		break;
 
 	case commands::CLE:
-		// TODO
+		// delete the code according to the number of the line
+		code.deleteCode(cmd.getLineNum());
+		ui->CodeDisplay->setText(code.getCode());
 		break;
 
 	case commands::INS:
-		// TODO
+		// execute the instant command directly
+		executeInstCmd(cmd);
 		break;
 
 	case commands::ERR:

@@ -42,6 +42,7 @@ private:
 
 private:
     void executeCmd(int no);
+    void executeInstCmd(const Command& cmd);
 
 private:
     void initSlots();
