@@ -51,7 +51,7 @@ namespace expressions {
 		// the first number is a negative number
 		if (exp[0] == '-') {
 			var += "-";
-			exp = exp.mid(1);
+			exp = exp.mid(1).trimmed();
 		}
 
 		// begin scan operation

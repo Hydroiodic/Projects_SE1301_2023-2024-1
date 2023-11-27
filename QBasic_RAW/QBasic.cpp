@@ -92,7 +92,17 @@ void QBasic::executeInstCmd(const Command& cmd) {
 	}
 
 	// execute the instant command and then release the memory
-	exp->executeExpression();
+	try {
+		exp->executeExpression();
+	}
+	catch (exceptions::unassigned_variable) {
+		inform("An unassigned variable is used");
+	}
+	catch (...) {
+		delete exp;
+		throw exceptions::unknown_error_internal();
+	}
+
 	delete exp;
 }
 

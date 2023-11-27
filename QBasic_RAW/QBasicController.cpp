@@ -2,17 +2,19 @@
 
 QBasicController::QBasicController(QObject* parent, QBasic* basic) 
 	: QObject(parent), basic(basic) {
-	/* there's nothing more to do */
+	// create a imaginery stack to count for the amonut of commands executed
+	stack = new QBasicStack();
 }
 
 QBasicController::~QBasicController() {
-	/* there's nothing more to do */
+	delete stack;
 }
 
 void QBasicController::run() const {
-	// clear the previous texts
+	// clear the previous texts and the height of the stack
 	basic->ui->treeDisplay->clear();
 	basic->ui->textBrowser->clear();
+	stack->resetStack();
 
 	// load all of the codes to QBasicExpression
 	loadExpressions();
@@ -36,6 +38,14 @@ void QBasicController::run() const {
 					i = next_i - 1;
 				}
 			}
+
+			// increase the number of the counter
+			stack->increaseStack();
+		}
+		catch (exceptions::stack_overflow) {
+			// stack overflow occurs
+			basic->inform("Stack overflow!");
+			break;
 		}
 		catch (...) {
 			// ATTENTION! Internal Error!
@@ -57,7 +67,7 @@ void QBasicController::load() const {
 }
 
 void QBasicController::list() const {
-	// TODO
+	/* nothing to do in this program */
 }
 
 void QBasicController::clear() const {

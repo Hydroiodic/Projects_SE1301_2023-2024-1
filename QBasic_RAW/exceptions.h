@@ -53,4 +53,7 @@ namespace exceptions {
 
 	// thrown if the name of the variable isn't legal
 	class illegal_variable_name : public std::exception {};
+
+	// the number of the lines executed reaches the max amount
+	class stack_overflow : public std::exception {};
 }

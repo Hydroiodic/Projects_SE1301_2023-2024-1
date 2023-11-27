@@ -37,11 +37,15 @@ bool QBasicVariable<T>::checkState() const {
 
 template <typename T>
 T QBasicVariable<T>::fetchValue() const {
-	// return the value only if the state of the variable is right
-	if (checkVar() && checkState()) return data;
+	// if the variable is unassigned, throw an error
+	if (!checkState()) throw exceptions::unassigned_variable();
 
-	// throw an error
-	throw exceptions::unassigned_variable();
+	// if the name of the variable is illegal, throw an error
+	// actually this exception won't be thrown if the variable is created normally
+	if (!checkVar()) throw exceptions::illegal_variable_name();
+
+	// return the value only if the variable is ready
+	return data;
 }
 
 template <typename T>

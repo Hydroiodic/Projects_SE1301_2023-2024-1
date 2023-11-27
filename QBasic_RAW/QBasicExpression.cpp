@@ -1,3 +1,4 @@
+#include "QBasic.h"
 #include "QBasicExpression.h"
 
 /************* Below are QBasicExpression functions *************/
@@ -77,8 +78,16 @@ int QBasicExpression::executeExp(int index) {
 	}
 
 	// execute the command
-	// TODO: exception handling
-	return exp_list[index].exp->executeExpression();
+	try {
+		return exp_list[index].exp->executeExpression();
+	}
+	catch (exceptions::unassigned_variable) {
+		basic->inform("An unassigned variable is used");
+		return -1;
+	}
+	catch (...) {
+		throw exceptions::unknown_error_internal();
+	}
 }
 
 void QBasicExpression::clearExp() {

@@ -31,7 +31,7 @@ private:
     QBasicVarList* variables_list = nullptr;
     QBasicExpression* expression = nullptr;
 
-private:
+public:
     void inform(const QString& str) const;
 
 private:
