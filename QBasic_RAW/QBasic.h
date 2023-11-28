@@ -6,6 +6,7 @@
 #include "QBasicCode.h"
 #include "QBasicExpression.h"
 #include "QBasicVarList.h"
+#include "QBasicHelp.h"
 #include "exceptions.h"
 #include "ui_QBasic.h"
 
@@ -26,6 +27,9 @@ private:
     QBasicCmdParser* parser = nullptr;
 
 private:
+    QBasicHelp* helper = nullptr;
+
+private:
     friend class expressions::Expression;
     QBasicVarList* variables_list = nullptr;
     QBasicExpression* expression = nullptr;
@@ -35,6 +39,7 @@ public:
 
 private:
     Command parseCommand(const QString& str) const;
+    void dispenseCommand(const QString& cmd_text);
 
 private:
     QBasicCode code;
@@ -58,14 +63,14 @@ public:
     void setInputState(QBasicVar* var);
 
 private slots:
-    void on_cmdLineEdit_returnPressed();
-    void on_btnClearCode_pressed();
-    void on_btnRunCode_pressed();
-    void on_btnLoadCode_pressed();
+    void cmdLineEditReturnPressed();
+    void btnClearCodePressed();
+    void btnRunCodePressed();
+    void btnLoadCodePressed();
 
 public slots:
     void append_output_text(const QString& str);
 
 private:
-    Ui::QBasic* ui;
+    Ui::QBasic ui;
 };

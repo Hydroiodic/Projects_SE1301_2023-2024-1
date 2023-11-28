@@ -81,7 +81,18 @@ void QBasicController::run() const {
 }
 
 void QBasicController::load() const {
-	// TODO
+	// get the path of the file to load to the program
+	QString file_path = QFileDialog::getOpenFileName();
+	
+	// open the file
+	std::fstream file(file_path.toStdString());
+	std::string line_string;
+
+	// input the lines one by one
+	while (file) {
+		std::getline(file, line_string);
+		basic->dispenseCommand(QString::fromStdString(line_string));
+	}
 }
 
 void QBasicController::list() const {
@@ -100,7 +111,8 @@ void QBasicController::clear() const {
 }
 
 void QBasicController::help() const {
-	// TODO
+	// show the help window that QBasic holds
+	basic->helper->show();
 }
 
 void QBasicController::quit() const {

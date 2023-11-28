@@ -53,6 +53,9 @@
     <ClCompile Include="QBasicVarList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QBasicHelp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QBasic.h">
@@ -76,9 +79,15 @@
     <QtMoc Include="expressions.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="QBasicHelp.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QBasic.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QBasicHelp.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

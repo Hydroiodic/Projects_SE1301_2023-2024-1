@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QObject>
+#include <QFileDialog>
+#include <fstream>
 #include "QBasic.h"
 #include "exceptions.h"
 

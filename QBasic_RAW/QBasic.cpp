@@ -1,23 +1,28 @@
 #include "QBasic.h"
 
-QBasic::QBasic(QWidget* parent) : QMainWindow(parent), ui(new Ui::QBasic) {
-	ui->setupUi(this);
+QBasic::QBasic(QWidget* parent) : QMainWindow(parent) {
+	ui.setupUi(this);
 
+	// create objects that are necessary for QBasic to run
 	controller = new QBasicController(nullptr, this);
 	parser = new QBasicCmdParser();
 	variables_list = new QBasicVarList();
 	expression = new QBasicExpression(nullptr, this);
+	helper = new QBasicHelp();
+
+	// the helper window should be hidden at the start
+	helper->hide();
 
 	// initialize slots for QBasic to use
 	initSlots();
 }
 
 QBasic::~QBasic() {
-	delete ui;
 	delete controller;
 	delete parser;
 	delete variables_list;
 	delete expression;
+	delete helper;
 }
 
 /************* Below are QBasic informing functions *************/
@@ -40,10 +45,47 @@ Command QBasic::parseCommand(const QString& str) const {
 	}
 	catch (...) {
 		// internal error occurred
-		assert(0);
+		throw exceptions::unknown_error_internal();
 	}
 
 	return Command(commands::TYPE::ERR);
+}
+
+void QBasic::dispenseCommand(const QString& cmd_text) {
+	// try parse and catch error
+	Command cmd = parseCommand(cmd_text);
+
+	switch (cmd.getType()) {
+	case commands::COM:
+		// execute the command input
+		executeCmd(cmd.getCommType());
+		break;
+
+	case commands::IMP:
+		// the input string is appended to the end of codes
+		code.addCode(cmd);
+		ui->CodeDisplay->setText(code.getCode());
+		break;
+
+	case commands::CLE:
+		// delete the code according to the number of the line
+		code.deleteCode(cmd.getLineNum());
+		ui->CodeDisplay->setText(code.getCode());
+		break;
+
+	case commands::INS:
+		// execute the instant command directly
+		executeInstCmd(cmd);
+		break;
+
+	case commands::ERR:
+		// there's nothing to do here
+		break;
+
+	default:
+		// no arrival forever
+		throw exceptions::impossible_arrival();
+	}
 }
 
 /************* Below are QBasic execution functions *************/
@@ -158,14 +200,16 @@ void QBasic::setInputState(QBasicVar* var) {
 
 void QBasic::initSlots() {
 	connect(this->ui->btnClearCode, &QPushButton::pressed, 
-		this, &QBasic::on_btnClearCode_pressed);
+		this, &QBasic::btnClearCodePressed);
 	connect(this->ui->btnLoadCode, &QPushButton::pressed,
-		this, &QBasic::on_btnLoadCode_pressed);
+		this, &QBasic::btnLoadCodePressed);
 	connect(this->ui->btnRunCode, &QPushButton::pressed,
-		this, &QBasic::on_btnRunCode_pressed);
+		this, &QBasic::btnRunCodePressed);
+	connect(this->ui->cmdLineEdit, &QLineEdit::returnPressed,
+		this, &QBasic::cmdLineEditReturnPressed);
 }
 
-void QBasic::on_cmdLineEdit_returnPressed() {
+void QBasic::cmdLineEditReturnPressed() {
 	// fetch and clear the input text
 	QString cmd_text = ui->cmdLineEdit->text();
 	ui->cmdLineEdit->setText("");
@@ -176,53 +220,20 @@ void QBasic::on_cmdLineEdit_returnPressed() {
 		return;
 	}
 	
-	// try parse and catch error
-	Command cmd = parseCommand(cmd_text);
-
-	switch (cmd.getType()) {
-	case commands::COM:
-		// execute the command input
-		executeCmd(cmd.getCommType());
-		break;
-
-	case commands::IMP:
-		// the input string is appended to the end of codes
-		code.addCode(cmd);
-		ui->CodeDisplay->setText(code.getCode());
-		break;
-
-	case commands::CLE:
-		// delete the code according to the number of the line
-		code.deleteCode(cmd.getLineNum());
-		ui->CodeDisplay->setText(code.getCode());
-		break;
-
-	case commands::INS:
-		// execute the instant command directly
-		executeInstCmd(cmd);
-		break;
-
-	case commands::ERR:
-		// there's nothing to do here
-		break;
-
-	default:
-		// no arrival forever
-		throw exceptions::impossible_arrival();
-	}
+	dispenseCommand(cmd_text);
 }
 
-void QBasic::on_btnClearCode_pressed() {
+void QBasic::btnClearCodePressed() {
 	// clear the code and the status of the program
 	controller->clear();
 }
 
-void QBasic::on_btnRunCode_pressed() {
+void QBasic::btnRunCodePressed() {
 	// run the input program
 	controller->run();
 }
 
-void QBasic::on_btnLoadCode_pressed() {
+void QBasic::btnLoadCodePressed() {
 	// load codes from an existing file
 	controller->load();
 }

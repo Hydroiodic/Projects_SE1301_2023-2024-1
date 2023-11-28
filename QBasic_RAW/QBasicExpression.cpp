@@ -105,10 +105,10 @@ commands::IMPL QBasicExpression::getExpType(int index) const {
 
 void QBasicExpression::clearExp() {
 	for (int i = 0; i < exp_list.size(); ++i) {
+		exp_list[i].exp->disconnect();
 		delete exp_list[i].exp;
 	}
 	exp_list.clear();
-	basic->disconnect();
 }
 
 QString QBasicExpression::getExpTree(int index) const {

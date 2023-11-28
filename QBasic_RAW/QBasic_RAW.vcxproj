@@ -25,6 +25,7 @@
     <ClCompile Include="QBasicCode.cpp" />
     <ClCompile Include="QBasicController.cpp" />
     <ClCompile Include="QBasicExpression.cpp" />
+    <ClCompile Include="QBasicHelp.cpp" />
     <ClCompile Include="QBasicVar.cpp" />
     <ClCompile Include="QBasicVarList.cpp" />
   </ItemGroup>
@@ -33,10 +34,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QBasic.ui" />
+    <QtUic Include="QBasicHelp.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commands.h" />
     <ClInclude Include="exceptions.h" />
+    <QtMoc Include="QBasicHelp.h" />
     <ClInclude Include="variables.h" />
     <QtMoc Include="QBasicVarList.h" />
     <QtMoc Include="QBasicCode.h" />
