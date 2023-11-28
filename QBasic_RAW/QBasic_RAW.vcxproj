@@ -41,7 +41,7 @@
     <QtMoc Include="QBasicVarList.h" />
     <QtMoc Include="QBasicCode.h" />
     <QtMoc Include="QBasicExpression.h" />
-    <ClInclude Include="expressions.h" />
+    <QtMoc Include="expressions.h" />
     <ClInclude Include="QBasicVar.h" />
     <QtMoc Include="QBasicCmdParser.h" />
     <QtMoc Include="QBasicController.h" />

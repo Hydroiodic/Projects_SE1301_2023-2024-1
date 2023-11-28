@@ -18,6 +18,7 @@ void QBasicExpression::addExp(commands::IMPL t,
 
 	// set the number of the line
 	pack_to_add.line_number = line;
+	pack_to_add.type = t;
 
 	// ACTIVE means the expression is ready for execution
 	// if there's any error afterwards, change it to ERROR before push
@@ -38,7 +39,10 @@ void QBasicExpression::addExp(commands::IMPL t,
 		case commands::IMPL::LET:
 			pack_to_add.exp = new let_expression(str, basic); break;
 		case commands::IMPL::PRINT:
-			pack_to_add.exp = new print_expression(str, basic); break;
+			pack_to_add.exp = new print_expression(str, basic);
+			connect(pack_to_add.exp, &Expression::appendOutputText, 
+				basic, &QBasic::append_output_text);
+			break;
 		case commands::IMPL::INPUT:
 			pack_to_add.exp = new input_expression(str, basic); break;
 		case commands::IMPL::GOTO:
@@ -90,11 +94,21 @@ int QBasicExpression::executeExp(int index) {
 	}
 }
 
+commands::IMPL QBasicExpression::getExpType(int index) const {
+	// ensure safe access to the vector
+	if (index >= exp_list.size()) {
+		throw exceptions::unknown_error_internal();
+	}
+
+	return exp_list[index].type;
+}
+
 void QBasicExpression::clearExp() {
 	for (int i = 0; i < exp_list.size(); ++i) {
 		delete exp_list[i].exp;
 	}
 	exp_list.clear();
+	basic->disconnect();
 }
 
 QString QBasicExpression::getExpTree(int index) const {

@@ -64,6 +64,8 @@ void QBasic::executeInstCmd(const Command& cmd) {
 
 		case commands::INST::Print:
 			exp = new print_expression(cmd.getExp(), this);
+			connect(exp, &Expression::appendOutputText, 
+				this, &QBasic::append_output_text);
 			break;
 
 		case commands::INST::Input:
@@ -170,6 +172,7 @@ void QBasic::on_cmdLineEdit_returnPressed() {
 
 	if (is_input) {
 		inputAssignVariable(cmd_text);
+		if (is_running) controller->run();
 		return;
 	}
 	
@@ -222,4 +225,8 @@ void QBasic::on_btnRunCode_pressed() {
 void QBasic::on_btnLoadCode_pressed() {
 	// load codes from an existing file
 	controller->load();
+}
+
+void QBasic::append_output_text(const QString& str) {
+	ui->textBrowser->append(str);
 }

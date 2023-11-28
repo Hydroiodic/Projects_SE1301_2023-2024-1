@@ -73,6 +73,9 @@
     <QtMoc Include="QBasicVarList.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="expressions.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QBasic.ui">
@@ -87,9 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="expressions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="variables.h">

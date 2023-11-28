@@ -17,20 +17,30 @@ void QBasicController::run() const {
 	stack->resetStack();
 
 	// load all of the codes to QBasicExpression
-	loadExpressions();
+	if (!basic->is_running) loadExpressions();
+	basic->is_running = true;
 
-	// iterate all codes saved previously
-	int len = basic->code.size(), i = 0;
+	// checking out-of-bound line number
+	int len = basic->code.size();
+
+	// ATTENTION! this variable "i" is static
+	static int index = -1;
+
+	// iterate codes saved previously from the previous line
 	while (true) {
 		// if the program runs out of the code
-		if (i >= len) {
+		if (++index >= len) {
 			basic->inform("No \"END\" encountered!");
 			break;
 		}
 
 		try {
 			// get the number of the next line
-			int next_line = basic->expression->executeExp(i);
+			int next_line = basic->expression->executeExp(index);
+			commands::IMPL t = basic->expression->getExpType(index);
+			if (t == commands::IMPL::INPUT) {
+				return;
+			}
 
 			// the expression is END
 			if (next_line == 0x7fffffff) {
@@ -41,13 +51,12 @@ void QBasicController::run() const {
 			if (next_line <= commands::max_line_num) {
 				int next_i = basic->code.getCodeNo(next_line);
 				if (next_i != -1) {
-					i = next_i - 1;
+					index = next_i - 1;
 				}
 			}
 
 			// increase the number of the counter
 			stack->increaseStack();
-			++i;
 		}
 		catch (exceptions::stack_overflow) {
 			// stack overflow occurs
@@ -67,6 +76,8 @@ void QBasicController::run() const {
 
 	// clear all of the expressions loaded into QBasicExpression
 	basic->expression->clearExp();
+	basic->is_running = false;
+	index = -1;
 }
 
 void QBasicController::load() const {

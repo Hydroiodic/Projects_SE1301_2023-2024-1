@@ -27,7 +27,6 @@ private:
 
 private:
     friend class expressions::Expression;
-    friend class expressions::print_expression;
     QBasicVarList* variables_list = nullptr;
     QBasicExpression* expression = nullptr;
 
@@ -52,6 +51,9 @@ private:
     QBasicVar* variable_to_input = nullptr;
     void inputAssignVariable(const QString& str);
 
+private:
+    bool is_running = false;
+
 public:
     void setInputState(QBasicVar* var);
 
@@ -60,6 +62,9 @@ private slots:
     void on_btnClearCode_pressed();
     void on_btnRunCode_pressed();
     void on_btnLoadCode_pressed();
+
+public slots:
+    void append_output_text(const QString& str);
 
 private:
     Ui::QBasic* ui;

@@ -529,7 +529,7 @@ namespace expressions {
 
 		// get the value and print them
 		int ans = calculateCalcuExp(root);
-		basic->ui->textBrowser->append(QString::number(ans) + "\n");
+		emit appendOutputText(QString::number(ans) + "\n");
 
 		return -1;
 	}

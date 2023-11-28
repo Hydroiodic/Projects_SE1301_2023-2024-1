@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include <QObject>
 #include <QPair>
 #include <string>
 #include <stack>
@@ -78,8 +79,10 @@ namespace expressions {
 		}
 	};
 
-	class Expression
+	class Expression : public QObject
 	{
+		Q_OBJECT
+
 	protected:
 		// variables and functions to build a tree
 		node* root = nullptr;
@@ -107,6 +110,11 @@ namespace expressions {
 	public:
 		Expression(QBasic* b) : basic(b) {};
 		~Expression();
+
+		/***************** Below are Expression signals *****************/
+
+	signals:
+		void appendOutputText(const QString&);
 
 		/************ Below are Expression virtual functions ************/
 
