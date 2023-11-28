@@ -18,5 +18,8 @@ public:
 	// clear the list of variables
 	void clearVarList();
 
+	// clear used counts of all variables
+	void clearVarCount() const;
+
 	QBasicVar* fetchVar(const QString& name);
 };

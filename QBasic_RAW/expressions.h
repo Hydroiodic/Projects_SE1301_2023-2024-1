@@ -104,6 +104,10 @@ namespace expressions {
 		// functions for getNodeExpTree to use
 		QString getNodeExpTree(node* r, int depth) const;
 
+		// save the executed count of the expression
+		int executed_count = 0;
+
+	private:
 		// a variable to save the list of variables
 		QBasic* basic = nullptr;
 
@@ -115,6 +119,7 @@ namespace expressions {
 
 	signals:
 		void appendOutputText(const QString&);
+		void inputVar(QBasicVar*);
 
 		/************ Below are Expression virtual functions ************/
 
@@ -128,6 +133,9 @@ namespace expressions {
 
 		// to execute the expression
 		virtual int executeExpression() = 0;
+
+		// get a string represent the executed count of the expression
+		virtual QString getExecutedCount() const;
 	};
 }
 
@@ -228,9 +236,13 @@ namespace expressions {
 		// start to build the internal tree
 		void buildTree(const QString& exp);
 
+		// executed counts of if_expression are different from other expressions
+		int true_count = 0;
+		int false_count = 0;
+
 	public:
 		if_expression(const QString& str, QBasic* l)
-			: Expression(l) {
+			: Expression(l), true_count(0), false_count(0) {
 			buildTree(str);
 		}
 
@@ -239,6 +251,9 @@ namespace expressions {
 
 		// to execute the expression
 		int executeExpression();
+
+		// rewrite getExecutedCount function
+		QString getExecutedCount() const;
 	};
 
 	class end_expression : public Expression {

@@ -36,7 +36,7 @@ bool QBasicVariable<T>::checkState() const {
 }
 
 template <typename T>
-T QBasicVariable<T>::fetchValue() const {
+T QBasicVariable<T>::fetchValue() {
 	// if the variable is unassigned, throw an error
 	if (!checkState()) throw exceptions::unassigned_variable();
 
@@ -44,8 +44,21 @@ T QBasicVariable<T>::fetchValue() const {
 	// actually this exception won't be thrown if the variable is created normally
 	if (!checkVar()) throw exceptions::illegal_variable_name();
 
+	// add use_count every time the data of the variable is fetched
+	++use_counts;
+
 	// return the value only if the variable is ready
 	return data;
+}
+
+template <typename T>
+int QBasicVariable<T>::fetchCount() const {
+	return use_counts;
+}
+
+template <typename T>
+void QBasicVariable<T>::resetCount() {
+	use_counts = 0;
 }
 
 template <typename T>

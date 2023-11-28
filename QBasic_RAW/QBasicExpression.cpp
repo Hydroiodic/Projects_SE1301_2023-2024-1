@@ -44,7 +44,10 @@ void QBasicExpression::addExp(commands::IMPL t,
 				basic, &QBasic::append_output_text);
 			break;
 		case commands::IMPL::INPUT:
-			pack_to_add.exp = new input_expression(str, basic); break;
+			pack_to_add.exp = new input_expression(str, basic);
+			connect(pack_to_add.exp, &Expression::inputVar,
+				basic, &QBasic::setInputState);
+			break;
 		case commands::IMPL::GOTO:
 			pack_to_add.exp = new goto_expression(str, basic); break;
 		case commands::IMPL::IF:

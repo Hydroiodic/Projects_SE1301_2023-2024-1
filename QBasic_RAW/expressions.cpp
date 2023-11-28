@@ -316,6 +316,10 @@ namespace expressions {
 
 		return ans;
 	}
+
+	QString Expression::getExecutedCount() const {
+		return QString::number(executed_count);
+	}
 }
 
 namespace expressions {
@@ -326,14 +330,19 @@ namespace expressions {
 		// expression isn't created
 		if (!root) { return "Error\n"; }
 
-		return "REM\n" + getNodeExpTree(root, 1);
+		return "REM " + getExecutedCount() + "\n" + getNodeExpTree(root, 1);
 	}
 
 	QString let_expression::getExpTree() const {
 		// expression isn't created
 		if (!root) { return "Error\n"; }
 
-		return "LET =\n" + getNodeExpTree(root->left, 1) +
+		// get the name of the left variable
+		QString left_variable = getNodeExpTree(root->left, 1);
+
+		return "LET = " + getExecutedCount() + "\n" +
+			left_variable.left(left_variable.size() - 1) + " " + 
+			QString::number(root->left->var->fetchCount()) + "\n" + 
 			getNodeExpTree(root->right, 1);
 	}
 
@@ -341,29 +350,31 @@ namespace expressions {
 		// expression isn't created
 		if (!root) { return "Error\n"; }
 
-		return "PRINT\n" + getNodeExpTree(root, 1);
+		return "PRINT " + getExecutedCount() + "\n" + getNodeExpTree(root, 1);
 	}
 
 	QString input_expression::getExpTree() const {
 		// expression isn't created
 		if (!root) { return "Error\n"; }
 
-		return "INPUT\n" + getNodeExpTree(root, 1);
+		return "INPUT " + getExecutedCount() + "\n" + getNodeExpTree(root, 1);
 	}
 
 	QString goto_expression::getExpTree() const {
 		// expression isn't created
 		if (!root) { return "Error\n"; }
 
-		return "GOTO\n" + getNodeExpTree(root, 1);
+		return "GOTO " + getExecutedCount() + "\n" + getNodeExpTree(root, 1);
 	}
 
 	QString if_expression::getExpTree() const {
 		// expression isn't created
 		if (!root) { return "Error\n"; }
 
-		return "IF THEN\n" + getNodeExpTree(root->left->left, 1) + 
-			"\t" + root->left->op + "\n" + getNodeExpTree(root->left->right, 1) + 
+		return "IF THEN " + getExecutedCount() + "\n" + 
+			getNodeExpTree(root->left->left, 1) +
+			"\t" + root->left->op + "\n" + 
+			getNodeExpTree(root->left->right, 1) + 
 			getNodeExpTree(root->right, 1);
 	}
 
@@ -499,7 +510,9 @@ namespace expressions {
 	/************* Below are executeExpression functions ************/
 
 	int ram_expression::executeExpression() {
-		/* there's nothing needed */
+		// add executed_count
+		++executed_count;
+
 		return -1;
 	}
 
@@ -518,6 +531,9 @@ namespace expressions {
 		QBasicVar* var_to_assign = root->left->var;
 		var_to_assign->assign(calculateCalcuExp(root->right));
 
+		// add executed_count
+		++executed_count;
+
 		return -1;
 	}
 
@@ -530,6 +546,9 @@ namespace expressions {
 		// get the value and print them
 		int ans = calculateCalcuExp(root);
 		emit appendOutputText(QString::number(ans) + "\n");
+
+		// add executed_count
+		++executed_count;
 
 		return -1;
 	}
@@ -546,7 +565,10 @@ namespace expressions {
 		}
 
 		// be ready for input
-		basic->setInputState(root->var);
+		emit inputVar(root->var);
+
+		// add executed_count
+		++executed_count;
 
 		return -1;
 	}
@@ -561,6 +583,9 @@ namespace expressions {
 		if (root->type != CON) {
 			throw exceptions::expression_error();
 		}
+
+		// add executed_count
+		++executed_count;
 
 		return root->constant;
 	}
@@ -578,8 +603,13 @@ namespace expressions {
 
 		// execute the expression
 		if (calculateCmpExp(root->left)) {
+			// add true_count
+			++true_count;
 			return root->right->constant;
 		}
+
+		// add false_count
+		++false_count;
 
 		// the condition doesn't match
 		return -1;
@@ -587,6 +617,10 @@ namespace expressions {
 
 	int end_expression::executeExpression() {
 		return 0x7fffffff;
+	}
+
+	QString if_expression::getExecutedCount() const {
+		return QString::number(true_count) + " " + QString::number(false_count);
 	}
 }
 

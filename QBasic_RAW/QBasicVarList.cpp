@@ -19,6 +19,14 @@ void QBasicVarList::clearVarList() {
 	variables_list.clear();
 }
 
+void QBasicVarList::clearVarCount() const {
+	// clear used counts of every variable stored
+	for (std::map<QString, QBasicVar*>::const_iterator it = variables_list.cbegin();
+		it != variables_list.cend(); ++it) {
+		it->second->resetCount();
+	}
+}
+
 QBasicVar* QBasicVarList::fetchVar(const QString& name) {
 	// fetch the variable according to "name"
 	std::map<QString, QBasicVar*>::iterator result = variables_list.find(name);

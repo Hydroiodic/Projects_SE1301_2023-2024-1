@@ -64,13 +64,13 @@ void QBasic::dispenseCommand(const QString& cmd_text) {
 	case commands::IMP:
 		// the input string is appended to the end of codes
 		code.addCode(cmd);
-		ui->CodeDisplay->setText(code.getCode());
+		ui.CodeDisplay->setText(code.getCode());
 		break;
 
 	case commands::CLE:
 		// delete the code according to the number of the line
 		code.deleteCode(cmd.getLineNum());
-		ui->CodeDisplay->setText(code.getCode());
+		ui.CodeDisplay->setText(code.getCode());
 		break;
 
 	case commands::INS:
@@ -112,6 +112,8 @@ void QBasic::executeInstCmd(const Command& cmd) {
 
 		case commands::INST::Input:
 			exp = new input_expression(cmd.getExp(), this);
+			connect(exp, &Expression::inputVar, 
+				this, &QBasic::setInputState);
 			break;
 
 		default:
@@ -165,7 +167,7 @@ void QBasic::inputAssignVariable(const QString& str) {
 	// if the input string is not a number
 	if (!expressions::isNumber(trimmed_str)) {
 		inform("The input string doesn't represent a number!");
-		ui->cmdLineEdit->setText("? ");
+		ui.cmdLineEdit->setText("? ");
 		return;
 	}
 
@@ -184,35 +186,23 @@ void QBasic::inputAssignVariable(const QString& str) {
 	variable_to_input = nullptr;
 }
 
-void QBasic::setInputState(QBasicVar* var) {
-	// this may never be reached
-	if (!var) {
-		throw exceptions::unknown_error_internal();
-	}
-
-	// be ready for the input
-	is_input = true;
-	variable_to_input = var;
-	ui->cmdLineEdit->setText("? ");
-}
-
 /*************** Below are QBasic slots functions ***************/
 
 void QBasic::initSlots() {
-	connect(this->ui->btnClearCode, &QPushButton::pressed, 
+	connect(this->ui.btnClearCode, &QPushButton::pressed, 
 		this, &QBasic::btnClearCodePressed);
-	connect(this->ui->btnLoadCode, &QPushButton::pressed,
+	connect(this->ui.btnLoadCode, &QPushButton::pressed,
 		this, &QBasic::btnLoadCodePressed);
-	connect(this->ui->btnRunCode, &QPushButton::pressed,
+	connect(this->ui.btnRunCode, &QPushButton::pressed,
 		this, &QBasic::btnRunCodePressed);
-	connect(this->ui->cmdLineEdit, &QLineEdit::returnPressed,
+	connect(this->ui.cmdLineEdit, &QLineEdit::returnPressed,
 		this, &QBasic::cmdLineEditReturnPressed);
 }
 
 void QBasic::cmdLineEditReturnPressed() {
 	// fetch and clear the input text
-	QString cmd_text = ui->cmdLineEdit->text();
-	ui->cmdLineEdit->setText("");
+	QString cmd_text = ui.cmdLineEdit->text();
+	ui.cmdLineEdit->setText("");
 
 	if (is_input) {
 		inputAssignVariable(cmd_text);
@@ -239,5 +229,17 @@ void QBasic::btnLoadCodePressed() {
 }
 
 void QBasic::append_output_text(const QString& str) {
-	ui->textBrowser->append(str);
+	ui.textBrowser->append(str);
+}
+
+void QBasic::setInputState(QBasicVar* var) {
+	// this may never be reached
+	if (!var) {
+		throw exceptions::unknown_error_internal();
+	}
+
+	// be ready for the input
+	is_input = true;
+	variable_to_input = var;
+	ui.cmdLineEdit->setText("? ");
 }

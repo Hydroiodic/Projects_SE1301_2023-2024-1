@@ -21,7 +21,13 @@ public:
 	void assign(T value);
 
 	// fetch the value of the variable
-	T fetchValue() const;
+	T fetchValue();
+
+	// get used count of a variable
+	int fetchCount() const;
+
+	// reset used count of a variable
+	void resetCount();
 
 	// fetch the name of the variable
 	QString fetchName() const;
@@ -41,6 +47,9 @@ private:
 
 	// save the data of the variable
 	T data;
+
+	// save the count that the variable is used
+	int use_counts = 0;
 };
 
 #include "QBasicVar.cpp"

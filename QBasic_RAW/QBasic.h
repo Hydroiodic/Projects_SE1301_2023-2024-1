@@ -59,9 +59,6 @@ private:
 private:
     bool is_running = false;
 
-public:
-    void setInputState(QBasicVar* var);
-
 private slots:
     void cmdLineEditReturnPressed();
     void btnClearCodePressed();
@@ -70,6 +67,7 @@ private slots:
 
 public slots:
     void append_output_text(const QString& str);
+    void setInputState(QBasicVar* var);
 
 private:
     Ui::QBasic ui;

@@ -12,8 +12,9 @@ QBasicController::~QBasicController() {
 
 void QBasicController::run() const {
 	// clear the previous texts and the height of the stack
-	basic->ui->treeDisplay->clear();
-	basic->ui->textBrowser->clear();
+	basic->ui.treeDisplay->clear();
+	basic->ui.textBrowser->clear();
+	basic->variables_list->clearVarCount();
 	stack->resetStack();
 
 	// load all of the codes to QBasicExpression
@@ -71,7 +72,7 @@ void QBasicController::run() const {
 
 	// append the expression to the tree one by one
 	for (int i = 0; i < len; ++i) {
-		basic->ui->treeDisplay->append(basic->expression->getExpTree(i));
+		basic->ui.treeDisplay->append(basic->expression->getExpTree(i));
 	}
 
 	// clear all of the expressions loaded into QBasicExpression
@@ -105,9 +106,9 @@ void QBasicController::clear() const {
 	basic->variables_list->clearVarList();
 
 	// clear the displayed text of the window
-	basic->ui->CodeDisplay->clear();
-	basic->ui->treeDisplay->clear();
-	basic->ui->textBrowser->clear();
+	basic->ui.CodeDisplay->clear();
+	basic->ui.treeDisplay->clear();
+	basic->ui.textBrowser->clear();
 }
 
 void QBasicController::help() const {
