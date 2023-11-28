@@ -47,6 +47,14 @@ private:
 private:
     void initSlots();
 
+private:
+    bool is_input = false;
+    QBasicVar* variable_to_input = nullptr;
+    void inputAssignVariable(const QString& str);
+
+public:
+    void setInputState(QBasicVar* var);
+
 private slots:
     void on_cmdLineEdit_returnPressed();
     void on_btnClearCode_pressed();

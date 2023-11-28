@@ -535,6 +535,19 @@ namespace expressions {
 	}
 
 	int input_expression::executeExpression() {
+		// if the expression are not loaded yet
+		if (!root) {
+			throw exceptions::expression_not_loaded();
+		}
+
+		// the type of root must be VAR
+		if (root->type != VAR) {
+			throw exceptions::command_type_unmatch_internal();
+		}
+
+		// be ready for input
+		basic->setInputState(root->var);
+
 		return -1;
 	}
 
@@ -635,11 +648,14 @@ namespace expressions {
 		if (trimmed_str == "") return false;
 
 		// the first char maybe '-' or number
-		if (!(trimmed_str[0] >= '0' && trimmed_str[0] <= '9' ||
-			trimmed_str[0] == '-' && trimmed_str.length() > 1)) return false;
+		if (trimmed_str[0] == '-') {
+			trimmed_str = trimmed_str.mid(1).trimmed();
+		}
+
+		if (trimmed_str == "") return false;
 
 		// the rest of the char must be number
-		for (int i = 1; i < trimmed_str.length(); ++i) {
+		for (int i = 0; i < trimmed_str.length(); ++i) {
 			if (!(trimmed_str[i] <= '9' && trimmed_str[i] >= '0')) {
 				return false;
 			}

@@ -106,6 +106,52 @@ void QBasic::executeInstCmd(const Command& cmd) {
 	delete exp;
 }
 
+void QBasic::inputAssignVariable(const QString& str) {
+	if (!variable_to_input && !is_input) {
+		is_input = false;
+		throw exceptions::unknown_error_internal();
+	}
+
+	// parse the input string
+	QString trimmed_str = str.trimmed();
+	if (trimmed_str.length() > 0 && trimmed_str[0] == '?') {
+		trimmed_str = trimmed_str.mid(1).trimmed();
+	}
+
+	// if the input string is not a number
+	if (!expressions::isNumber(trimmed_str)) {
+		inform("The input string doesn't represent a number!");
+		ui->cmdLineEdit->setText("? ");
+		return;
+	}
+
+	// the sign bit
+	int base = 1;
+	if (trimmed_str[0] == '-') {
+		base = -1;
+		trimmed_str = trimmed_str.mid(1).trimmed();
+	}
+
+	// assign the variable
+	variable_to_input->assign(base * trimmed_str.toInt());
+
+	// reset the input state
+	is_input = false;
+	variable_to_input = nullptr;
+}
+
+void QBasic::setInputState(QBasicVar* var) {
+	// this may never be reached
+	if (!var) {
+		throw exceptions::unknown_error_internal();
+	}
+
+	// be ready for the input
+	is_input = true;
+	variable_to_input = var;
+	ui->cmdLineEdit->setText("? ");
+}
+
 /*************** Below are QBasic slots functions ***************/
 
 void QBasic::initSlots() {
@@ -121,6 +167,11 @@ void QBasic::on_cmdLineEdit_returnPressed() {
 	// fetch and clear the input text
 	QString cmd_text = ui->cmdLineEdit->text();
 	ui->cmdLineEdit->setText("");
+
+	if (is_input) {
+		inputAssignVariable(cmd_text);
+		return;
+	}
 	
 	// try parse and catch error
 	Command cmd = parseCommand(cmd_text);
@@ -129,7 +180,7 @@ void QBasic::on_cmdLineEdit_returnPressed() {
 	case commands::COM:
 		// execute the command input
 		executeCmd(cmd.getCommType());
-		return;
+		break;
 
 	case commands::IMP:
 		// the input string is appended to the end of codes

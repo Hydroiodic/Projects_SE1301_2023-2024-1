@@ -20,8 +20,14 @@ void QBasicController::run() const {
 	loadExpressions();
 
 	// iterate all codes saved previously
-	int len = basic->code.size();
-	for (int i = 0; i < len; ++i) {
+	int len = basic->code.size(), i = 0;
+	while (true) {
+		// if the program runs out of the code
+		if (i >= len) {
+			basic->inform("No \"END\" encountered!");
+			break;
+		}
+
 		try {
 			// get the number of the next line
 			int next_line = basic->expression->executeExp(i);
@@ -41,6 +47,7 @@ void QBasicController::run() const {
 
 			// increase the number of the counter
 			stack->increaseStack();
+			++i;
 		}
 		catch (exceptions::stack_overflow) {
 			// stack overflow occurs
@@ -73,6 +80,7 @@ void QBasicController::list() const {
 void QBasicController::clear() const {
 	basic->code.clearCode();
 	basic->expression->clearExp();
+	basic->variables_list->clearVarList();
 
 	// clear the displayed text of the window
 	basic->ui->CodeDisplay->clear();
