@@ -50,8 +50,9 @@ namespace expressions {
 
 		// the first number is a negative number
 		if (exp[0] == '-') {
-			var += "-";
-			exp = exp.mid(1).trimmed();
+			node* seat = new node(0);
+			seat->is_empty_in_tree = true;
+			varia.push(seat);
 		}
 
 		// begin scan operation
@@ -313,6 +314,11 @@ namespace expressions {
 		// recursion
 		ans += r->left ? getNodeExpTree(r->left, depth + 1) : "";
 		ans += r->right ? getNodeExpTree(r->right, depth + 1) : "";
+
+		// if the line is empty, abort it
+		if (ans.trimmed() == "") {
+			return "";
+		}
 
 		return ans;
 	}
@@ -764,31 +770,31 @@ namespace expressions {
 			throw exceptions::unknown_error_internal();
 		}
 
+		// calculate on the left tree and on the right tree
+		int left_r = calculateCalcuExp(left);
+		int right_r = calculateCalcuExp(right);
+		int left_s = left_r >= 0 ? 0 : 1;
+		int right_s = right_r >= 0 ? 0 : 1;
+
 		// deal with different operators
 		switch (i) {
-		case 0:
-			return calculateCalcuExp(left) + calculateCalcuExp(right);
+		case 0: return left_r + right_r;
 
-		case 1:
-			return calculateCalcuExp(left) - calculateCalcuExp(right);
+		case 1: return left_r - right_r;
 
-		case 2:
-			return calculateCalcuExp(left) * calculateCalcuExp(right);
+		case 2: return left_r * right_r;
 
-		case 3:
-			return calculateCalcuExp(left) / calculateCalcuExp(right);
+		case 3: return left_r / right_r;
 
-		case 4:
-			return calculateCalcuExp(left) % calculateCalcuExp(right);
+		case 4: return left_r % right_r + 
+			(left_s - right_s) * qAbs(right_r);
 
-		case 5:
-			return qPow(calculateCalcuExp(left), calculateCalcuExp(right));
+		case 5: return qPow(left_r, right_r);
 
-		default:
-			throw exceptions::impossible_arrival();
+		default: throw exceptions::impossible_arrival();
 		}
 	}
-
+	  
 	bool calculateCmpExp(node* r) {
 		// all comparing operators
 		static const std::vector<QString> operators = {

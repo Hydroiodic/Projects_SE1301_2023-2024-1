@@ -32,7 +32,7 @@ QBasic::~QBasic() {
 /************* Below are QBasic informing functions *************/
 
 void QBasic::inform(const QString& str) const {
-	qDebug() << str;
+	ui.textBrowser->append(str + "\n");
 }
 
 /************** Below are QBasic parsing functions **************/

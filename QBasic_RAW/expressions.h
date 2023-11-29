@@ -50,6 +50,8 @@ namespace expressions {
 
 		node* left = nullptr, * right = nullptr;
 
+		bool is_empty_in_tree = false;
+
 		// create an op node
 		node(const QString& op, node* l = nullptr, node* r = nullptr)
 			: op(op), left(l), right(r), type(OP) {}
@@ -61,6 +63,12 @@ namespace expressions {
 			: constant(number), left(l), right(r), type(CON) {}
 
 		QString getContent() const {
+			// the node doesn't represent anything in the expression tree
+			if (is_empty_in_tree) {
+				return "";
+			}
+
+			// deal with different types of nodes
 			switch (type) {
 			case OP:
 				return op;
