@@ -31,7 +31,7 @@ void QBasicController::run() const {
 	while (true) {
 		// if the program runs out of the code
 		if (++index >= len) {
-			basic->inform("No \"END\" encountered!");
+			informer.sendInform("No \"END\" encountered!");
 			break;
 		}
 
@@ -61,7 +61,7 @@ void QBasicController::run() const {
 		}
 		catch (exceptions::stack_overflow) {
 			// stack overflow occurs
-			basic->inform("Stack overflow!");
+			informer.sendInform("Stack overflow!");
 			break;
 		}
 		catch (...) {

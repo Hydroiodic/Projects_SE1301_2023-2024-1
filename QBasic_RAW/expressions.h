@@ -6,6 +6,7 @@
 #include <string>
 #include <stack>
 #include "QBasicVar.h"
+#include "QBasicVarList.h"
 #include "commands.h"
 #include "exceptions.h"
 
@@ -109,10 +110,10 @@ namespace expressions {
 
 	private:
 		// a variable to save the list of variables
-		QBasic* basic = nullptr;
+		QBasicVarList* variables_list = nullptr;
 
 	public:
-		Expression(QBasic* b) : basic(b) {};
+		Expression(QBasicVarList* l) : variables_list(l) {};
 		~Expression();
 
 		/***************** Below are Expression signals *****************/
@@ -147,7 +148,7 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		ram_expression(const QString& str, QBasic* l)
+		ram_expression(const QString& str, QBasicVarList* l)
 			: Expression(l) {
 			buildTree(str);
 		}
@@ -165,7 +166,7 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		let_expression(const QString& str, QBasic* l)
+		let_expression(const QString& str, QBasicVarList* l)
 			: Expression(l) {
 			buildTree(str);
 		}
@@ -183,7 +184,7 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		print_expression(const QString& str, QBasic* l)
+		print_expression(const QString& str, QBasicVarList* l)
 			: Expression(l) {
 			buildTree(str);
 		}
@@ -201,7 +202,7 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		input_expression(const QString& str, QBasic* l)
+		input_expression(const QString& str, QBasicVarList* l)
 			: Expression(l) {
 			buildTree(str);
 		}
@@ -219,7 +220,7 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		goto_expression(const QString& str, QBasic* l)
+		goto_expression(const QString& str, QBasicVarList* l)
 			: Expression(l) {
 			buildTree(str);
 		}
@@ -241,7 +242,7 @@ namespace expressions {
 		int false_count = 0;
 
 	public:
-		if_expression(const QString& str, QBasic* l)
+		if_expression(const QString& str, QBasicVarList* l)
 			: Expression(l), true_count(0), false_count(0) {
 			buildTree(str);
 		}
@@ -262,7 +263,7 @@ namespace expressions {
 		void buildTree(const QString& exp);
 
 	public:
-		end_expression(const QString& str, QBasic* l)
+		end_expression(const QString& str, QBasicVarList* l)
 			: Expression(l) {
 			buildTree(str);
 		}

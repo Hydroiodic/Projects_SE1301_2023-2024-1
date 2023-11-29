@@ -7,8 +7,12 @@ QBasic::QBasic(QWidget* parent) : QMainWindow(parent) {
 	controller = new QBasicController(nullptr, this);
 	parser = new QBasicCmdParser();
 	variables_list = new QBasicVarList();
-	expression = new QBasicExpression(nullptr, this);
+	expression = new QBasicExpression(nullptr, this, variables_list);
 	helper = new QBasicHelp();
+
+	// connect inform function
+	connect(&informer, &QBasicInform::inform, 
+		this, &QBasic::inform);
 
 	// the helper window should be hidden at the start
 	helper->hide();
@@ -101,17 +105,17 @@ void QBasic::executeInstCmd(const Command& cmd) {
 		// deal with different type the instant command holds
 		switch (cmd.getInstType()) {
 		case commands::INST::Let:
-			exp = new let_expression(cmd.getExp(), this);
+			exp = new let_expression(cmd.getExp(), variables_list);
 			break;
 
 		case commands::INST::Print:
-			exp = new print_expression(cmd.getExp(), this);
+			exp = new print_expression(cmd.getExp(), variables_list);
 			connect(exp, &Expression::appendOutputText, 
 				this, &QBasic::append_output_text);
 			break;
 
 		case commands::INST::Input:
-			exp = new input_expression(cmd.getExp(), this);
+			exp = new input_expression(cmd.getExp(), variables_list);
 			connect(exp, &Expression::inputVar, 
 				this, &QBasic::setInputState);
 			break;

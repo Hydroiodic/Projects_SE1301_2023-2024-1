@@ -7,6 +7,7 @@
 #include "QBasicExpression.h"
 #include "QBasicVarList.h"
 #include "QBasicHelp.h"
+#include "QBasicInform.h"
 #include "exceptions.h"
 #include "ui_QBasic.h"
 
@@ -30,11 +31,10 @@ private:
     QBasicHelp* helper = nullptr;
 
 private:
-    friend class expressions::Expression;
     QBasicVarList* variables_list = nullptr;
     QBasicExpression* expression = nullptr;
 
-public:
+public slots:
     void inform(const QString& str) const;
 
 private:

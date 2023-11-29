@@ -3,8 +3,8 @@
 
 /************* Below are QBasicExpression functions *************/
 
-QBasicExpression::QBasicExpression(QObject* parent, QBasic* b) 
-	: QObject(parent), basic(b) {
+QBasicExpression::QBasicExpression(QObject* parent, QBasic* b, QBasicVarList* l)
+	: QObject(parent), basic(b), list(l) {
 	/* there's nothing to do */
 }
 
@@ -35,25 +35,25 @@ void QBasicExpression::addExp(commands::IMPL t,
 		// create diffrent object for different commands
 		switch (t) {
 		case commands::IMPL::REM:
-			pack_to_add.exp = new ram_expression(str, basic); break;
+			pack_to_add.exp = new ram_expression(str, list); break;
 		case commands::IMPL::LET:
-			pack_to_add.exp = new let_expression(str, basic); break;
+			pack_to_add.exp = new let_expression(str, list); break;
 		case commands::IMPL::PRINT:
-			pack_to_add.exp = new print_expression(str, basic);
+			pack_to_add.exp = new print_expression(str, list);
 			connect(pack_to_add.exp, &Expression::appendOutputText, 
 				basic, &QBasic::append_output_text);
 			break;
 		case commands::IMPL::INPUT:
-			pack_to_add.exp = new input_expression(str, basic);
+			pack_to_add.exp = new input_expression(str, list);
 			connect(pack_to_add.exp, &Expression::inputVar,
 				basic, &QBasic::setInputState);
 			break;
 		case commands::IMPL::GOTO:
-			pack_to_add.exp = new goto_expression(str, basic); break;
+			pack_to_add.exp = new goto_expression(str, list); break;
 		case commands::IMPL::IF:
-			pack_to_add.exp = new if_expression(str, basic); break;
+			pack_to_add.exp = new if_expression(str, list); break;
 		case commands::IMPL::END:
-			pack_to_add.exp = new end_expression(str, basic); break;
+			pack_to_add.exp = new end_expression(str, list); break;
 		default:
 			throw exceptions::impossible_arrival();
 		}
@@ -89,7 +89,7 @@ int QBasicExpression::executeExp(int index) {
 		return exp_list[index].exp->executeExpression();
 	}
 	catch (exceptions::unassigned_variable) {
-		basic->inform("An unassigned variable is used");
+		informer.sendInform("An unassigned variable is used");
 		return -1;
 	}
 	catch (...) {

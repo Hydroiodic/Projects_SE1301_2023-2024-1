@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <fstream>
 #include "QBasic.h"
+#include "QBasicInform.h"
 #include "exceptions.h"
 
 class QBasic;

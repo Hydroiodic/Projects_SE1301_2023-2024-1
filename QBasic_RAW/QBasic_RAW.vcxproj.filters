@@ -56,6 +56,9 @@
     <ClCompile Include="QBasicHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QBasicInform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QBasic.h">
@@ -80,6 +83,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="QBasicHelp.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QBasicInform.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

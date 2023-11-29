@@ -243,7 +243,7 @@ namespace expressions {
 		}
 		// else the string represents a variable
 		else {
-			QBasicVar* variable = basic->variables_list->fetchVar(var);
+			QBasicVar* variable = variables_list->fetchVar(var);
 			node* var_to_push = new node(variable);
 
 			// check the name of the variable

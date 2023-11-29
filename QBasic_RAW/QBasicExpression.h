@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include "QBasicVarList.h"
+#include "QBasicInform.h"
 #include "expressions.h"
 
 using namespace expressions;
@@ -13,7 +14,7 @@ class QBasicExpression : public QObject
 	Q_OBJECT
 
 public:
-	QBasicExpression(QObject* parent, QBasic* b);
+	QBasicExpression(QObject* parent, QBasic* b, QBasicVarList* l);
 	~QBasicExpression();
 
 private:
@@ -28,6 +29,7 @@ private:
 
 private:
 	QBasic* basic = nullptr;
+	QBasicVarList* list = nullptr;
 
 public:
 	// to create an expression object of type implement
