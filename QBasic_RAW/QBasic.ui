@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>GuiBasic</string>
+   <string>QBasic</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
