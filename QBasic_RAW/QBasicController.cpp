@@ -39,7 +39,8 @@ void QBasicController::run() const {
 			// get the number of the next line
 			int next_line = basic->expression->executeExp(index);
 			commands::IMPL t = basic->expression->getExpType(index);
-			if (t == commands::IMPL::INPUT) {
+			expressions::STATE_EXP s = basic->expression->getExpState(index);
+			if (t == commands::IMPL::INPUT && s == expressions::STATE_EXP::ACTIVE) {
 				return;
 			}
 

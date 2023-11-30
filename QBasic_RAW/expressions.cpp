@@ -1,3 +1,14 @@
+// expressions.cpp
+// namespace expressions defined here, including nearly all operations on expressions
+
+// ATTENTION!
+// if the input is error, exceptions should only be thrown during the process of
+//     "buildTree", which means as long as the tree is built, the expression must
+//     be all right or broken shown by the structure exp_pack.
+
+// and when the codes begin to run, the exceptions thrown should only relate to runtime
+//     error such as "unassigned_variable" or "no_end_encountered".
+
 #include "QBasic.h"
 #include "expressions.h"
 
@@ -657,11 +668,10 @@ namespace expressions {
 			return false;
 		}
 
+		// the left part of the expression must be a variable
 		split_str[0] = split_str[0].trimmed();
-		for (int i = 0; i < split_str[0].length(); ++i) {
-			if (!checkChar(split_str[0].toStdString()[i])) {
-				return false;
-			}
+		if (!isVariable(split_str[0])) {
+			return false;
 		}
 
 		return isCalcuExp(split_str[1]);

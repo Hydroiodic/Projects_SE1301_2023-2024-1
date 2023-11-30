@@ -35,8 +35,9 @@ public:
 	// to create an expression object of type implement
 	void addExp(commands::IMPL t, const QString& str, int line, commands::STATE s);
 	int executeExp(int index);
-	commands::IMPL getExpType(int index) const;
 	void clearExp();
+	commands::IMPL getExpType(int index) const;
+	STATE_EXP getExpState(int index) const;
 
 public:
 	QString getExpTree(int index) const;

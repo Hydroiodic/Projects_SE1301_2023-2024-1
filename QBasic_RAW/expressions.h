@@ -1,3 +1,6 @@
+// expressions.h
+// header file for expressions.cpp
+
 #pragma once
 
 #include <QString>

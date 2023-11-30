@@ -41,7 +41,7 @@ void QBasicExpression::addExp(commands::IMPL t,
 		case commands::IMPL::PRINT:
 			pack_to_add.exp = new print_expression(str, list);
 			connect(pack_to_add.exp, &Expression::appendOutputText, 
-				basic, &QBasic::append_output_text);
+				basic, &QBasic::appendOutputText);
 			break;
 		case commands::IMPL::INPUT:
 			pack_to_add.exp = new input_expression(str, list);
@@ -89,7 +89,7 @@ int QBasicExpression::executeExp(int index) {
 		return exp_list[index].exp->executeExpression();
 	}
 	catch (exceptions::unassigned_variable) {
-		informer.sendInform("An unassigned variable is used");
+		informer.sendInform("An unassigned variable is used!");
 		return -1;
 	}
 	catch (...) {
@@ -104,6 +104,15 @@ commands::IMPL QBasicExpression::getExpType(int index) const {
 	}
 
 	return exp_list[index].type;
+}
+
+STATE_EXP QBasicExpression::getExpState(int index) const {
+	// ensure safe access to the vector
+	if (index >= exp_list.size()) {
+		throw exceptions::unknown_error_internal();
+	}
+
+	return exp_list[index].state;
 }
 
 void QBasicExpression::clearExp() {

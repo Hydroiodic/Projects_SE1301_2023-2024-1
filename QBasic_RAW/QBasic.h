@@ -66,7 +66,7 @@ private slots:
     void btnLoadCodePressed();
 
 public slots:
-    void append_output_text(const QString& str);
+    void appendOutputText(const QString& str);
     void setInputState(QBasicVar* var);
 
 private:

@@ -111,7 +111,7 @@ void QBasic::executeInstCmd(const Command& cmd) {
 		case commands::INST::Print:
 			exp = new print_expression(cmd.getExp(), variables_list);
 			connect(exp, &Expression::appendOutputText, 
-				this, &QBasic::append_output_text);
+				this, &QBasic::appendOutputText);
 			break;
 
 		case commands::INST::Input:
@@ -146,7 +146,7 @@ void QBasic::executeInstCmd(const Command& cmd) {
 		exp->executeExpression();
 	}
 	catch (exceptions::unassigned_variable) {
-		inform("An unassigned variable is used");
+		inform("An unassigned variable is used!");
 	}
 	catch (...) {
 		delete exp;
@@ -232,7 +232,7 @@ void QBasic::btnLoadCodePressed() {
 	controller->load();
 }
 
-void QBasic::append_output_text(const QString& str) {
+void QBasic::appendOutputText(const QString& str) {
 	ui.textBrowser->append(str);
 }
 
