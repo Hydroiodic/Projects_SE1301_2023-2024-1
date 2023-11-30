@@ -38,6 +38,8 @@ void QBasicController::run() const {
 		try {
 			// get the number of the next line
 			int next_line = basic->expression->executeExp(index);
+
+			// deal with the input operation
 			commands::IMPL t = basic->expression->getExpType(index);
 			expressions::STATE_EXP s = basic->expression->getExpState(index);
 			if (t == commands::IMPL::INPUT && s == expressions::STATE_EXP::ACTIVE) {
@@ -54,6 +56,9 @@ void QBasicController::run() const {
 				int next_i = basic->code.getCodeNo(next_line);
 				if (next_i != -1) {
 					index = next_i - 1;
+				}
+				else {
+					informer.sendInform("A non-existent line number to go to!");
 				}
 			}
 

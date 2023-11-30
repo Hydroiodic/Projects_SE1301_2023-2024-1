@@ -84,7 +84,7 @@ namespace commands {
 
 		// the first part must be a number within a specific range
 		if (!input) return RESULT(false, Command());
-		if (line_number > max_line_num) throw exceptions::line_number_out_of_range();
+		if (line_number - 1 >= max_line_num) throw exceptions::line_number_out_of_range();
 
 		// the command to execute
 		std::string impl_command = "", exp = "";
