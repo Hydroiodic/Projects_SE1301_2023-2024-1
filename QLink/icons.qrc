@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/fruit/apple.png</file>
+        <file>icons/fruit/banana.png</file>
+        <file>icons/fruit/grape.png</file>
+        <file>icons/fruit/kiwi.png</file>
+        <file>icons/fruit/orange.png</file>
+        <file>icons/fruit/peach.png</file>
+        <file>icons/fruit/pineapple.png</file>
+        <file>icons/fruit/pit.png</file>
+        <file>icons/fruit/plum.png</file>
+        <file>icons/fruit/strawberry.png</file>
+        <file>icons/fruit/watermelon.png</file>
+    </qresource>
+</RCC>

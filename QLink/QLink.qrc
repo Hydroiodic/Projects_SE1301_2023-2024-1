@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/QLink">
+        <file>kid/1.png</file>
+        <file>kid/2.png</file>
+        <file>kid/3.png</file>
+        <file>kid/1_mir.png</file>
+        <file>kid/2_mir.png</file>
+        <file>kid/3_mir.png</file>
+        <file>background/initial_background.png</file>
+        <file>background/background.png</file>
+    </qresource>
+</RCC>

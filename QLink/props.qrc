@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>props/addSecond.png</file>
+        <file>props/hint.png</file>
+        <file>props/shuffle.png</file>
+        <file>props/dizzy.png</file>
+        <file>props/flash.png</file>
+        <file>props/freeze.png</file>
+        <file>props/speedup.png</file>
+        <file>props/unknown.png</file>
+    </qresource>
+</RCC>
