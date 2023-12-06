@@ -3,8 +3,9 @@
 
 /************* Below are QBasicExpression functions *************/
 
-QBasicExpression::QBasicExpression(QObject* parent, QBasic* b, QBasicVarList* l)
-	: QObject(parent), basic(b), list(l) {
+QBasicExpression::QBasicExpression(QObject* parent, 
+	QBasic* b, QBasicVarList* l, QBasicCode* c)
+	: QObject(parent), basic(b), list(l), code(c) {
 	/* there's nothing to do */
 }
 
@@ -49,9 +50,9 @@ void QBasicExpression::addExp(commands::IMPL t,
 				basic, &QBasic::setInputState);
 			break;
 		case commands::IMPL::GOTO:
-			pack_to_add.exp = new goto_expression(str, list); break;
+			pack_to_add.exp = new goto_expression(str, list, code); break;
 		case commands::IMPL::IF:
-			pack_to_add.exp = new if_expression(str, list); break;
+			pack_to_add.exp = new if_expression(str, list, code); break;
 		case commands::IMPL::END:
 			pack_to_add.exp = new end_expression(str, list); break;
 		default:
@@ -89,7 +90,15 @@ int QBasicExpression::executeExp(int index) {
 		return exp_list[index].exp->executeExpression();
 	}
 	catch (exceptions::unassigned_variable) {
-		informer.sendInform("An unassigned variable is used!");
+		informer.sendInform("In Line " + 
+			QString::number(exp_list[index].line_number) + 
+			": An unassigned variable is used!");
+		return -1;
+	}
+	catch (exceptions::jump_to_nonexistent_line) {
+		informer.sendInform("In Line " +
+			QString::number(exp_list[index].line_number) +
+			": A non-existent line number to go to!");
 		return -1;
 	}
 	catch (...) {

@@ -56,4 +56,7 @@ namespace exceptions {
 
 	// the number of the lines executed reaches the max amount
 	class stack_overflow : public std::exception {};
+
+	// the destination line of GOTO or IF is non-existent
+	class jump_to_nonexistent_line : public std::exception {};
 }

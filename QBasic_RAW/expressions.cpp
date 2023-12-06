@@ -596,15 +596,28 @@ namespace expressions {
 			throw exceptions::expression_not_loaded();
 		}
 
-		// if the type doesn't match
-		if (root->type != CON) {
-			throw exceptions::expression_error();
+		// if the pointer to "QBasicCode" is nullptr
+		if (!code) {
+			throw exceptions::unknown_error_internal();
+		}
+
+		// up to here, the expression should be right
+
+		// find the index of the next line
+
+		// the expression after GOTO should be a number
+		// here use calculateCalcuExp to deal with negative numbers
+		int next_index = code->getCodeNo(calculateCalcuExp(root));
+
+		// if the destination to jump is non-existent
+		if (next_index == -1) {
+			throw exceptions::jump_to_nonexistent_line();
 		}
 
 		// add executed_count
 		++executed_count;
 
-		return root->constant;
+		return next_index;
 	}
 
 	int if_expression::executeExpression() {
@@ -613,16 +626,31 @@ namespace expressions {
 			throw exceptions::expression_not_loaded();
 		}
 
-		// the right son node must be a constant node
-		if (!root->right || root->right->type != CON) {
-			throw exceptions::expression_error();
+		// if the pointer to "QBasicCode" is nullptr
+		if (!code) {
+			throw exceptions::unknown_error_internal();
 		}
+
+		// up to here, the expression should be right
 
 		// execute the expression
 		if (calculateCmpExp(root->left)) {
 			// add true_count
 			++true_count;
-			return root->right->constant;
+			
+			// find the index of the next line
+			
+			// the expression after GOTO should be a number
+			// here use calculateCalcuExp to deal with negative numbers
+			int next_index = code->getCodeNo(
+				calculateCalcuExp(root->right));
+
+			// if the destination to jump is non-existent
+			if (next_index == -1) {
+				throw exceptions::jump_to_nonexistent_line();
+			}
+
+			return next_index;
 		}
 
 		// add false_count

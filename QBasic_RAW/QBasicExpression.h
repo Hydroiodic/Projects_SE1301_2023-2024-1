@@ -14,7 +14,8 @@ class QBasicExpression : public QObject
 	Q_OBJECT
 
 public:
-	QBasicExpression(QObject* parent, QBasic* b, QBasicVarList* l);
+	QBasicExpression(QObject* parent, QBasic* b, 
+		QBasicVarList* l, QBasicCode* c);
 	~QBasicExpression();
 
 private:
@@ -30,6 +31,7 @@ private:
 private:
 	QBasic* basic = nullptr;
 	QBasicVarList* list = nullptr;
+	QBasicCode* code = nullptr;
 
 public:
 	// to create an expression object of type implement

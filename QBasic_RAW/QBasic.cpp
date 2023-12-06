@@ -7,7 +7,8 @@ QBasic::QBasic(QWidget* parent) : QMainWindow(parent) {
 	controller = new QBasicController(nullptr, this);
 	parser = new QBasicCmdParser();
 	variables_list = new QBasicVarList();
-	expression = new QBasicExpression(nullptr, this, variables_list);
+	expression = new QBasicExpression(nullptr, 
+		this, variables_list, &code);
 	helper = new QBasicHelp();
 
 	// connect inform function

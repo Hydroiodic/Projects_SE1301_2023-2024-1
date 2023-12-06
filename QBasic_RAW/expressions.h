@@ -8,6 +8,7 @@
 #include <QPair>
 #include <string>
 #include <stack>
+#include "QBasicCode.h"
 #include "QBasicVar.h"
 #include "QBasicVarList.h"
 #include "commands.h"
@@ -226,13 +227,16 @@ namespace expressions {
 	};
 
 	class goto_expression : public Expression {
+	private:
+		QBasicCode* code = nullptr;
+
 	protected:
 		// start to build the internal tree
 		void buildTree(const QString& exp);
 
 	public:
-		goto_expression(const QString& str, QBasicVarList* l)
-			: Expression(l) {
+		goto_expression(const QString& str, QBasicVarList* l, QBasicCode* c)
+			: Expression(l), code(c) {
 			buildTree(str);
 		}
 
@@ -244,6 +248,9 @@ namespace expressions {
 	};
 
 	class if_expression : public Expression {
+	private:
+		QBasicCode* code = nullptr;
+
 	protected:
 		// start to build the internal tree
 		void buildTree(const QString& exp);
@@ -253,8 +260,8 @@ namespace expressions {
 		int false_count = 0;
 
 	public:
-		if_expression(const QString& str, QBasicVarList* l)
-			: Expression(l), true_count(0), false_count(0) {
+		if_expression(const QString& str, QBasicVarList* l, QBasicCode* c)
+			: Expression(l), code(c), true_count(0), false_count(0) {
 			buildTree(str);
 		}
 

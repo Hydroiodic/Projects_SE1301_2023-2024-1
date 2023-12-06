@@ -31,13 +31,13 @@ void QBasicController::run() const {
 	while (true) {
 		// if the program runs out of the code
 		if (++index >= len) {
-			informer.sendInform("No \"END\" encountered!");
+			informer.sendInform("No \"END\" encountered at the end of the program!");
 			break;
 		}
 
 		try {
 			// get the number of the next line
-			int next_line = basic->expression->executeExp(index);
+			int next_line_index = basic->expression->executeExp(index);
 
 			// deal with the input operation
 			commands::IMPL t = basic->expression->getExpType(index);
@@ -47,19 +47,22 @@ void QBasicController::run() const {
 			}
 
 			// the expression is END
-			if (next_line == 0x7fffffff) {
+			if (next_line_index == 0x7fffffff) {
 				break;
 			}
 
 			// find the index of "next_line" and assign it to i
-			if (next_line <= commands::max_line_num) {
-				int next_i = basic->code.getCodeNo(next_line);
-				if (next_i != -1) {
-					index = next_i - 1;
-				}
-				else {
-					informer.sendInform("A non-existent line number to go to!");
-				}
+			if (next_line_index >= 0 && next_line_index < len) {
+				index = next_line_index - 1;
+
+				// increase the number of the counter
+				stack->increaseStack();
+				continue;
+			}
+
+			// no other possible conditions!
+			if (next_line_index != -1) {
+				throw exceptions::unknown_error_internal();
 			}
 
 			// increase the number of the counter
@@ -67,7 +70,7 @@ void QBasicController::run() const {
 		}
 		catch (exceptions::stack_overflow) {
 			// stack overflow occurs
-			informer.sendInform("Stack overflow!");
+			informer.sendInform("Segment Fault! Stack overflow!");
 			break;
 		}
 		catch (...) {
