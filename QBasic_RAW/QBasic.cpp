@@ -191,6 +191,19 @@ void QBasic::inputAssignVariable(const QString& str) {
 	variable_to_input = nullptr;
 }
 
+/************** Below are QBasic running functions **************/
+
+void QBasic::clearRunningState() {
+	// set is_running to false
+	is_running = false;
+
+	// set is_input to false and clear the cmdLineEdit
+	if (is_input) {
+		is_input = false;
+		ui.cmdLineEdit->clear();
+	}
+}
+
 /*************** Below are QBasic slots functions ***************/
 
 void QBasic::initSlots() {
@@ -219,16 +232,42 @@ void QBasic::cmdLineEditReturnPressed() {
 }
 
 void QBasic::btnClearCodePressed() {
+	// clear the running state first
+	clearRunningState();
+
 	// clear the code and the status of the program
 	controller->clear();
 }
 
 void QBasic::btnRunCodePressed() {
+	// re-running the program needs to clear the running status first
+	if (is_running) {
+		clearRunningState();
+	}
+
 	// run the input program
 	controller->run();
 }
 
 void QBasic::btnLoadCodePressed() {
+	// loading code when the program is running is not allowed
+	if (is_running) {
+		QMessageBox warning(QMessageBox::Icon::Warning, "Warning",
+			"Loading code when the program is running is not allowed. \
+			Press \"Ignore\" to stop the program and then load your code or \
+			press \"Abort\" to terminate loading codes.", 
+			QMessageBox::Ignore | QMessageBox::Abort);
+		int result = warning.exec();
+
+		// if "Abort" is pressed, return directly
+		if (result == QMessageBox::Abort) {
+			return;
+		}
+	}
+
+	// clear the running state first
+	clearRunningState();
+
 	// load codes from an existing file
 	controller->load();
 }

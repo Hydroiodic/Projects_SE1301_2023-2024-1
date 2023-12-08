@@ -17,15 +17,22 @@ void QBasicController::run() const {
 	basic->variables_list->clearVarCount();
 	stack->resetStack();
 
-	// load all of the codes to QBasicExpression
-	if (!basic->is_running) loadExpressions();
-	basic->is_running = true;
-
 	// checking out-of-bound line number
 	int len = basic->code.size();
 
-	// ATTENTION! this variable "i" is static
+	// ATTENTION! this variable "index" is static
 	static int index = -1;
+
+	// load all of the codes to QBasicExpression if codes aren't running
+	if (!basic->is_running) {
+		// clear first and then load
+		basic->expression->clearExp();
+		loadExpressions();
+
+		// reset the index first
+		index = -1;
+	}
+	basic->is_running = true;
 
 	// iterate codes saved previously from the previous line
 	while (true) {

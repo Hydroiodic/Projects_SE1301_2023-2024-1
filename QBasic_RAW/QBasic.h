@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QMessageBox>
 #include "QBasicController.h"
 #include "QBasicCmdParser.h"
 #include "QBasicCode.h"
@@ -58,6 +59,7 @@ private:
 
 private:
     bool is_running = false;
+    void clearRunningState();
 
 private slots:
     void cmdLineEditReturnPressed();
