@@ -240,10 +240,24 @@ void QBasic::btnClearCodePressed() {
 }
 
 void QBasic::btnRunCodePressed() {
-	// re-running the program needs to clear the running status first
+	// running code when the program is running will be warned
 	if (is_running) {
-		clearRunningState();
+		QMessageBox warning(QMessageBox::Icon::Warning, "Warning",
+			"Re-running code will lose all outputs of the current program. "
+			"Are you sure to continue? "
+			"Press \"Ignore\" to stop the program and then re-run your code or "
+			"press \"Abort\" to terminate the current operation.",
+			QMessageBox::Ignore | QMessageBox::Abort);
+		int result = warning.exec();
+
+		// if "Abort" is pressed, return directly
+		if (result == QMessageBox::Abort) {
+			return;
+		}
 	}
+
+	// re-running the program needs to clear the running status first
+	clearRunningState();
 
 	// run the input program
 	controller->run();
@@ -253,9 +267,9 @@ void QBasic::btnLoadCodePressed() {
 	// loading code when the program is running is not allowed
 	if (is_running) {
 		QMessageBox warning(QMessageBox::Icon::Warning, "Warning",
-			"Loading code when the program is running is not allowed. \
-			Press \"Ignore\" to stop the program and then load your code or \
-			press \"Abort\" to terminate loading codes.", 
+			"Loading code when the program is running is not allowed. "
+			"Press \"Ignore\" to stop the program and then load your code or "
+			"press \"Abort\" to terminate loading codes.", 
 			QMessageBox::Ignore | QMessageBox::Abort);
 		int result = warning.exec();
 
