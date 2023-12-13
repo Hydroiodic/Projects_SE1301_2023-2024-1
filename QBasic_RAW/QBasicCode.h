@@ -1,3 +1,6 @@
+// QBasicCode.h
+// header file for QBasicCode.cpp
+
 #pragma once
 
 #include <QObject>

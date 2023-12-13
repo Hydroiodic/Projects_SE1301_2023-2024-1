@@ -1,3 +1,6 @@
+// QBasic.h
+// header file for QBasic.cpp
+
 #pragma once
 
 #include <QMainWindow>

@@ -1,3 +1,11 @@
+// QBasicController.cpp
+// providing methods to operate on the main class
+
+// ATTENTION! this class provides methods to operate on the main class QBasic
+//     and this class is the ONLY friend class to QBasic. the methods provided by
+//     this class will have DIRECT influence on the interactions. So, methods here
+//     should be implemented carefully.
+
 #include "QBasicController.h"
 
 QBasicController::QBasicController(QObject* parent, QBasic* basic) 

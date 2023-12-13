@@ -1,3 +1,6 @@
+// QBasicVarList.cpp
+// providing methods to operate on the list of stored variables
+
 #include "QBasicVarList.h"
 
 QBasicVarList::QBasicVarList(QObject* parent) : QObject(parent) {

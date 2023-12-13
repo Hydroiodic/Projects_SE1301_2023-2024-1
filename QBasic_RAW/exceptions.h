@@ -1,3 +1,6 @@
+// exceptions.h
+// namespace exceptions defined here, containing all exceptions that this program may throw
+
 #pragma once
 
 #include <exception>

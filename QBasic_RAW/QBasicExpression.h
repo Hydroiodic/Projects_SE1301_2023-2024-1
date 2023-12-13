@@ -1,3 +1,6 @@
+// QBasicExpression.h
+// header file for QBasicExpression.cpp
+
 #pragma once
 
 #include <QObject>

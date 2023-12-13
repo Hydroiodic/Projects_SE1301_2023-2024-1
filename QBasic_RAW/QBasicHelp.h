@@ -1,3 +1,6 @@
+// QBasicHelp.h
+// header file for QBasicHelp.cpp
+
 #pragma once
 
 #include <QWidget>

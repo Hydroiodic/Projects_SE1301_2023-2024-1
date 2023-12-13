@@ -1,3 +1,8 @@
+// QBasicExpression.cpp
+// providing APIs for QBasic to operate on expressions, thus, 
+//     the main class QBasic won't operate on the class expressions::Expression
+//     directly, doing good abstraction
+
 #include "QBasic.h"
 #include "QBasicExpression.h"
 

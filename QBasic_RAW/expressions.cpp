@@ -749,10 +749,15 @@ namespace expressions {
 		if (trimmed_str == "") return false;
 		if (trimmed_str[0] >= '0' && trimmed_str[0] <= '9') return false;
 
+		// the codes below are commented because whether the name of the variable
+		//     is a keyword will be checked in the function "pushVariable". To make 
+		//     the error info more clear, the codes below are commented. However, 
+		//     this is against the original intention of this function.
+
 		// check key_words
-		for (int i = 0; i < variables::key_words.size(); ++i) {
+		/*for (int i = 0; i < variables::key_words.size(); ++i) {
 			if (variables::key_words[i] == trimmed_str) return false;
-		}
+		}*/
 
 		// check char
 		for (int i = 0; i < trimmed_str.length(); ++i) {

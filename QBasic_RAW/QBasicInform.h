@@ -1,3 +1,6 @@
+// QBasicInform.h
+// header file for QBasicInform.cpp
+
 #pragma once
 
 #include <QObject>
@@ -14,4 +17,5 @@ signals:
 
 };
 
+// ATTENTION! Here defines an extern variable!
 extern QBasicInform informer;

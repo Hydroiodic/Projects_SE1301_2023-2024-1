@@ -1,3 +1,6 @@
+// QBasicCode.cpp
+// providing a method to store all input codes by the user
+
 #include "QBasicCode.h"
 
 QBasicCode::QBasicCode(QObject* parent) : QObject(parent) {

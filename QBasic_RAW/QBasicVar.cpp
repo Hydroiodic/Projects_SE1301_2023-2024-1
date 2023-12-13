@@ -1,4 +1,7 @@
-// this expression ensures no repeat compilation
+// QBasicVar.cpp
+// providing methods to store a variable
+
+// this expression ensures no repeat compilation for .cpp file
 #pragma once
 
 #include "QBasicVar.h"

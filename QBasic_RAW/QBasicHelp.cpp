@@ -1,3 +1,6 @@
+// QBasicHelp.cpp
+// providing a window to provide the user with help
+
 #include "QBasicHelp.h"
 
 QBasicHelp::QBasicHelp(QWidget* parent) : QWidget(parent) {

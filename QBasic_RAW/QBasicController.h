@@ -1,3 +1,6 @@
+// QBasicController.h
+// header file for QBasicController.cpp
+
 #pragma once
 
 #include <QObject>

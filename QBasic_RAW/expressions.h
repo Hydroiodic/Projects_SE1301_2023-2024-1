@@ -1,5 +1,6 @@
 // expressions.h
 // header file for expressions.cpp
+// namespace expressions defined here
 
 #pragma once
 

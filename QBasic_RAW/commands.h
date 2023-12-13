@@ -1,4 +1,5 @@
-// commands.h, saving those commands to type in
+// commands.h
+// namespace commands defined here, saving those commands to type in
 
 #pragma once
 

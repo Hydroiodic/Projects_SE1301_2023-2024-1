@@ -1,3 +1,6 @@
+// main.cpp
+// defines "main" function, providing the entry of the program
+
 #include "QBasic.h"
 #include <QApplication>
 

@@ -1,3 +1,7 @@
+// commands.cpp
+// namespace commands defined here
+// some functions on finding a command are defined here
+
 #include "commands.h"
 
 namespace commands {

@@ -1,3 +1,6 @@
+// QBasicVarList.h
+// header file for QBasicVarList.cpp
+
 #pragma once
 
 #include <QObject>

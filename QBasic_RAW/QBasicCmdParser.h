@@ -1,3 +1,7 @@
+// QBasicCmdParser.h
+// header file for QBasicCmdParser.cpp
+// namespace commands defined here
+
 #pragma once
 
 #include <QObject>
@@ -51,8 +55,8 @@ namespace commands {
 			if (t != TYPE::CLE) type_error();
 		}
 		// summon INS command
-		Command(TYPE t, INST i, const QString& str)
-			: type(t), inst_type(i), exp(str) {
+		Command(TYPE t, INST i, const QString& e, const QString& r)
+			: type(t), inst_type(i), exp(e), raw_str(r) {
 			if (t != TYPE::INS) type_error();
 		}
 

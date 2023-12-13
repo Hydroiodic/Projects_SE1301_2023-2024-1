@@ -1,3 +1,7 @@
+// QBasic.cpp
+// the mainWindow class QBasic defined here, all interactions with 
+//     the user are going to happen here
+
 #include "QBasic.h"
 
 QBasic::QBasic(QWidget* parent) : QMainWindow(parent) {
@@ -43,10 +47,10 @@ Command QBasic::parseCommand(const QString& str) const {
 		return parser->parseCommand(str);
 	}
 	catch (exceptions::line_number_out_of_range) {
-		inform("The input line number must be positive and less then 1000000!");
+		inform(str + ": The input line number must be positive and less then 1000000!");
 	}
 	catch (exceptions::unknown_command) {
-		inform("The input command is unknown to us.");
+		inform(str + ": The input command is unknown to us.");
 	}
 	catch (...) {
 		// internal error occurred
@@ -126,11 +130,11 @@ void QBasic::executeInstCmd(const Command& cmd) {
 		}
 	}
 	catch (exceptions::expression_error) {
-		inform("The input instant expression is error!");
+		inform(cmd.getRawStr() + ": The input instant expression is error!");
 		return;
 	}
 	catch (exceptions::illegal_variable_name) {
-		inform("The name of the variable is illegal!");
+		inform(cmd.getRawStr() + ": The name of the variable is illegal!");
 		return;
 	}
 	catch (...) {
@@ -147,7 +151,7 @@ void QBasic::executeInstCmd(const Command& cmd) {
 		exp->executeExpression();
 	}
 	catch (exceptions::unassigned_variable) {
-		inform("An unassigned variable is used!");
+		inform(cmd.getRawStr() + ": An unassigned variable is used!");
 	}
 	catch (...) {
 		delete exp;

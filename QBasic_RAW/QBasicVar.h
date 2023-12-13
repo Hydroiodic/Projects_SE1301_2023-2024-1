@@ -1,3 +1,6 @@
+// QBasicVar.h
+// header file for QBasicVar.cpp
+
 #pragma once
 
 #include <QObject>
@@ -52,6 +55,8 @@ private:
 	int use_counts = 0;
 };
 
+// because of the template attribute of the class QBasicVariable, 
+//     the .cpp file should be included here
 #include "QBasicVar.cpp"
 
 // in this program, all variables are set as the type "int"

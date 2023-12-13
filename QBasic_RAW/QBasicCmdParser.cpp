@@ -1,3 +1,7 @@
+// QBasicCmdParser.cpp
+// providing a way to detect the type of the input commands 
+//     and split them into some parts to save in a structure Command
+
 #include <sstream>
 #include <string>
 #include "QBasicCmdParser.h"
@@ -42,7 +46,7 @@ namespace commands {
 	}
 
 	QString Command::getRawStr() const {
-		if (type != TYPE::IMP) {
+		if (type != TYPE::IMP && type != TYPE::INS) {
 			type_error();
 		}
 
@@ -145,7 +149,8 @@ namespace commands {
 		// no instant command found, return false
 		if (inst_command_num == -1) return RESULT(false, Command());
 
-		return RESULT(true, Command(INS, INST(inst_command_num), QString::fromStdString(exp)));
+		return RESULT(true, Command(INS, INST(inst_command_num), 
+			QString::fromStdString(exp), trimmed_str));
 	}
 
 	Command QBasicCmdParser::parseCommand(const QString& str) const {

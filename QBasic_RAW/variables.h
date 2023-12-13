@@ -1,3 +1,8 @@
+// variables.h
+// namespace variables defined here
+
+// the namespace variables stores some contants for QBasicVariable class to use
+
 #pragma once
 
 #include <QObject>
