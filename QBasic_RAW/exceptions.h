@@ -62,4 +62,7 @@ namespace exceptions {
 
 	// the destination line of GOTO or IF is non-existent
 	class jump_to_nonexistent_line : public std::exception {};
+
+	// a number is divided by zero
+	class divided_by_zero : public std::exception {};
 }

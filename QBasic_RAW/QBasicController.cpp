@@ -19,12 +19,6 @@ QBasicController::~QBasicController() {
 }
 
 void QBasicController::run() const {
-	// clear the previous texts and the height of the stack
-	basic->ui.treeDisplay->clear();
-	basic->ui.textBrowser->clear();
-	basic->variables_list->clearVarCount();
-	stack->resetStack();
-
 	// checking out-of-bound line number
 	int len = basic->code.size();
 
@@ -33,14 +27,22 @@ void QBasicController::run() const {
 
 	// load all of the codes to QBasicExpression if codes aren't running
 	if (!basic->is_running) {
+		// clear the previous texts and the height of the stack
+		basic->ui.treeDisplay->clear();
+		basic->ui.textBrowser->clear();
+		basic->variables_list->clearVarCount();
+		stack->resetStack();
+
 		// clear first and then load
 		basic->expression->clearExp();
 		loadExpressions();
 
 		// reset the index first
 		index = -1;
+
+		// set the running state of basic to true
+		basic->is_running = true;
 	}
-	basic->is_running = true;
 
 	// iterate codes saved previously from the previous line
 	while (true) {
@@ -110,7 +112,7 @@ void QBasicController::load() const {
 	QString file_path = QFileDialog::getOpenFileName();
 	
 	// open the file
-	std::fstream file(file_path.toStdString());
+	std::fstream file(file_path.toStdString(), std::ios::in);
 	std::string line_string;
 
 	// input the lines one by one

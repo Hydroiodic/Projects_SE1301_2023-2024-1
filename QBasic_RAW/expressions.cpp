@@ -827,7 +827,10 @@ namespace expressions {
 
 		case 2: return left_r * right_r;
 
-		case 3: return left_r / right_r;
+		case 3:
+			// every number shouldn't be divided by zero
+			if (!right_r) throw::exceptions::divided_by_zero();
+			return left_r / right_r;
 
 		case 4: return left_r % right_r + 
 			(left_s - right_s) * qAbs(right_r);

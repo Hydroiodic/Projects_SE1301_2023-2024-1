@@ -106,6 +106,12 @@ int QBasicExpression::executeExp(int index) {
 			": A non-existent line number to go to!");
 		return -1;
 	}
+	catch (exceptions::divided_by_zero) {
+		informer.sendInform("In Line " +
+			QString::number(exp_list[index].line_number) +
+			": A number is divided by zero!");
+		return -1;
+	}
 	catch (...) {
 		throw exceptions::unknown_error_internal();
 	}

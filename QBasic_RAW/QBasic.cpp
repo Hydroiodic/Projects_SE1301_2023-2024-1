@@ -153,6 +153,10 @@ void QBasic::executeInstCmd(const Command& cmd) {
 	catch (exceptions::unassigned_variable) {
 		inform(cmd.getRawStr() + ": An unassigned variable is used!");
 	}
+	catch (exceptions::divided_by_zero) {
+		inform(cmd.getRawStr() + ": A number is divided by zero!");
+		return;
+	}
 	catch (...) {
 		delete exp;
 		throw exceptions::unknown_error_internal();
