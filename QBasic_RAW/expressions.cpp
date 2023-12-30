@@ -85,8 +85,12 @@ namespace expressions {
 				}
 
 				bool findBracket = false;
+				int bracket_num = 0;
 				for (int j = i; j < exp.length(); ++j) {
-					if (exp[j] == ')') {
+					if (exp[j] == '(') ++bracket_num;
+					else if (exp[j] == ')') --bracket_num;
+
+					if (!bracket_num) {
 						findBracket = true;
 						node* bracket = nullptr;
 						try {
@@ -816,8 +820,6 @@ namespace expressions {
 		// calculate on the left tree and on the right tree
 		int left_r = calculateCalcuExp(left);
 		int right_r = calculateCalcuExp(right);
-		int left_s = left_r >= 0 ? 0 : 1;
-		int right_s = right_r >= 0 ? 0 : 1;
 
 		// deal with different operators
 		switch (i) {
@@ -832,8 +834,11 @@ namespace expressions {
 			if (!right_r) throw::exceptions::divided_by_zero();
 			return left_r / right_r;
 
-		case 4: return left_r % right_r + 
-			(left_s - right_s) * qAbs(right_r);
+		case 4:
+			// every number shouldn't be divided by zero
+			if (!right_r) throw::exceptions::divided_by_zero();
+			return left_r - right_r * static_cast<int>(
+				floor(static_cast<double>(left_r) / right_r));
 
 		case 5: return qPow(left_r, right_r);
 
