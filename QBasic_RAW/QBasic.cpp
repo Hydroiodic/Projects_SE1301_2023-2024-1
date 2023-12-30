@@ -61,6 +61,11 @@ Command QBasic::parseCommand(const QString& str) const {
 }
 
 void QBasic::dispenseCommand(const QString& cmd_text) {
+	// if the command_text is empty, return directly
+	if (cmd_text.trimmed() == "") {
+		return;
+	}
+
 	// try parse and catch error
 	Command cmd = parseCommand(cmd_text);
 
