@@ -1124,9 +1124,9 @@ void QLink::keyPressSetMove(int _kid_no, int _cur_key, bool isRepeated) {
         }
     if (_cur_key == keys[_kid_no][4 + dizzy[_kid_no] * 5]) {
         temp = findKid(kid[_kid_no], _find_kid_ratio);
-        if (temp.first != -1 && temp != _cur_pressed_button[1] &&
+        if (temp.first != -1 && temp != _cur_pressed_button[_kid_no] &&
             !_link_first_last.contains(temp) && !isRepeated) {
-            buttonPressed(_cur_pressed_button[0], temp, _kid_no);
+            buttonPressed(_cur_pressed_button[_kid_no], temp, _kid_no);
         }
     }
 }
