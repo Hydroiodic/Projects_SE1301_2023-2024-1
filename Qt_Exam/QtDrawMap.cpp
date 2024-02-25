@@ -21,17 +21,17 @@ void QtDrawMap::config(const QDrawMapSettings& settings_to_set) {
 
 void QtDrawMap::paintBg(QPixmap& map, size_t width, size_t height) const {
 	// the width and height of a single square
-	double max_width = static_cast<double>(width - (settings.padding << 1)) / settings.M;
-	double max_height = static_cast<double>(height - (settings.padding << 1)) / settings.N;
+	double max_width = static_cast<double>(width - (settings.padding << 1)) / settings.N;
+	double max_height = static_cast<double>(height - (settings.padding << 1)) / settings.M;
 	double block_width = qMin(max_width, max_height);
 
 	// calculate for the start position for painting
-	double x_start = static_cast<double>(width) / 2 -
+	double x_start = static_cast<double>(width) / 2 - 
+		static_cast<double>(settings.N) * block_width / 2;
+	double y_start = static_cast<double>(height) / 2 - 
 		static_cast<double>(settings.M) * block_width / 2;
-	double y_start = static_cast<double>(height) / 2 -
-		static_cast<double>(settings.M) * block_width / 2;
-	double x_end = x_start + settings.M * block_width;
-	double y_end = y_start + settings.N * block_width;
+	double x_end = x_start + settings.N * block_width;
+	double y_end = y_start + settings.M * block_width;
 
 	// start painting
 	painter->begin(&map);
@@ -40,13 +40,13 @@ void QtDrawMap::paintBg(QPixmap& map, size_t width, size_t height) const {
 	painter->setPen(QPen(settings.bgLineColor, settings.painter_size));
 
 	// the vertical lines
-	for (int i = 0; i <= settings.M; ++i) {
+	for (int i = 0; i <= settings.N; ++i) {
 		painter->drawLine(QPointF(x_start + block_width * i, y_start),
 			QPointF(x_start + block_width * i, y_end));
 	}
 
 	// the horizontal lines
-	for (int j = 0; j <= settings.N; ++j) {
+	for (int j = 0; j <= settings.M; ++j) {
 		painter->drawLine(QPointF(x_start, y_start + block_width * j),
 			QPointF(x_end, y_start + block_width * j));
 	}
@@ -58,15 +58,15 @@ void QtDrawMap::paintBg(QPixmap& map, size_t width, size_t height) const {
 void QtDrawMap::paintBlock(QPixmap& map, size_t width, size_t height,
 	const QList<QBlockData>& blocks_to_paint) const {
 	// the width and height of a single square
-	double max_width = static_cast<double>(width - (settings.padding << 1)) / settings.M;
-	double max_height = static_cast<double>(height - (settings.padding << 1)) / settings.N;
+	double max_width = static_cast<double>(width - (settings.padding << 1)) / settings.N;
+	double max_height = static_cast<double>(height - (settings.padding << 1)) / settings.M;
 	double block_width = qMin(max_width, max_height);
 
 	// calculate for the start position for painting
 	double x_start = static_cast<double>(width) / 2 -
-		static_cast<double>(settings.M) * block_width / 2;
-	double y_start = static_cast<double>(height) / 2 -
 		static_cast<double>(settings.N) * block_width / 2;
+	double y_start = static_cast<double>(height) / 2 -
+		static_cast<double>(settings.M) * block_width / 2;
 
 	// start painting
 	painter->begin(&map);
